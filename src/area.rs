@@ -18,6 +18,7 @@ const SQUARE_METER_ACRE_FACTOR: f64 = 1.0 / 4046.86;
 /// let acres = football_field.as_acres();
 /// println!("There are {} acres in a football field.", acres);
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug)]
 pub struct Area {
     square_meters: f64,

@@ -14,6 +14,7 @@ use super::measurement::*;
 /// let beers = gallon / pint;
 /// println!("A gallon of beer will pour {} pints!", beers);
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug)]
 pub struct Volume {
     liters: f64,

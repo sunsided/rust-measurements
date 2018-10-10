@@ -29,6 +29,7 @@ pub const HERTZ_TERAHERTZ_FACTOR: f64 = 1e-12;
 /// let radio_station = Frequency::from_hertz(101.5e6);
 /// println!("Tune to {}.", radio_station);
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug)]
 pub struct Frequency {
     hertz: f64,
