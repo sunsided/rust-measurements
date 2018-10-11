@@ -14,6 +14,7 @@ use super::measurement::*;
 /// let fahrenheit = boiling_water.as_fahrenheit();
 /// println!("Boiling water measures at {} degrees fahrenheit.", fahrenheit);
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug)]
 pub struct Temperature {
     degrees_kelvin: f64,
@@ -32,6 +33,7 @@ pub struct Temperature {
 /// let difference: TemperatureDelta = boiling_water - frozen_water;
 /// println!("Boiling water is {} above freezing.", difference);
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug)]
 pub struct TemperatureDelta {
     kelvin_degrees: f64,

@@ -53,6 +53,7 @@ pub const KILOGRAM_LONG_TONS_FACTOR: f64 = KILOGRAM_POUNDS_FACTOR / 2240.0;
 ///     "One metric ton is {} U.S. tons - that's {} pounds!",
 ///     united_states_tons, united_states_pounds);
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug)]
 pub struct Mass {
     kilograms: f64,

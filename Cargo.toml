@@ -5,6 +5,7 @@ authors = ["James O'Cull <jocull@delmarsd.com>",
           "Jonathan Pallant <github@thejpster.org.uk>",
           "Hannah McLaughlin <h@mcla.ug>",
           "Danilo Bargen <mail@dbrgn.ch>",
+          "Tim Alberdingk Thijm <tthijm@princeton.edu>",
           ]
 documentation = "https://docs.rs/crate/measurements"
 repository = "https://github.com/thejpster/rust-measurements"
@@ -15,3 +16,6 @@ readme = "README.md"
 
 [features]
 no_std = []
+
+[dependencies]
+serde = { version = "1.0", optional = true, features = ["derive"] }

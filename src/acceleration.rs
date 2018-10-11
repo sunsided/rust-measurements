@@ -22,6 +22,7 @@ use super::length;
 ///     println!("You accelerated over {} at an average of {}", track, accel);
 ///}
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug)]
 pub struct Acceleration {
     meters_per_second_per_second: f64,

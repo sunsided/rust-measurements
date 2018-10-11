@@ -14,6 +14,7 @@ use super::measurement::*;
 /// let slice = whole_cake / pieces;
 /// println!("Each slice will be {} degrees", slice.as_degrees());
 /// ```
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug)]
 pub struct Angle {
     radians: f64,

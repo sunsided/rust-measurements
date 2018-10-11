@@ -18,6 +18,10 @@ use core::time as time;
 #[cfg(not(feature = "no_std"))]
 use std::time as time;
 
+#[cfg(feature = "serde")]
+#[macro_use]
+extern crate serde;
+
 use std::f64::consts::PI as PI;
 
 #[macro_use]
