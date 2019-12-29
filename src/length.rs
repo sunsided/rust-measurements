@@ -22,15 +22,15 @@ pub const METER_KILOMETER_FACTOR: f64 = 0.001;
 // Constants, imperial
 
 /// Number of inches in a meter
-pub const METER_INCH_FACTOR: f64 = 1000.0 / 25.4;
+pub const METER_INCH_FACTOR: f64 = 10000.0 / 254.0;
 /// Number of feet in a meter
-pub const METER_FEET_FACTOR: f64 = 1000.0 / (25.4 * 12.0);
+pub const METER_FEET_FACTOR: f64 = 10000.0 / (254.0 * 12.0);
 /// Number of yards in a meter
-pub const METER_YARD_FACTOR: f64 = 1000.0 / (25.4 * 12.0 * 3.0);
+pub const METER_YARD_FACTOR: f64 = 10000.0 / (254.0 * 12.0 * 3.0);
 /// Number of furlongs in a meter
-pub const METER_FURLONG_FACTOR: f64 = 1000.0 / (25.4 * 12.0 * 3.0 * 220.0);
+pub const METER_FURLONG_FACTOR: f64 = 10000.0 / (254.0 * 12.0 * 3.0 * 220.0);
 /// Number of miles in a meter
-pub const METER_MILE_FACTOR: f64 = 1000.0 / (25.4 * 12.0 * 3.0 * 1760.0);
+pub const METER_MILE_FACTOR: f64 = 10000.0 / (254.0 * 12.0 * 3.0 * 1760.0);
 
 /// The Length struct can be used to deal with lengths in a common way.
 /// Common metric and imperial units are supported.
