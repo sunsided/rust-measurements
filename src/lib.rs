@@ -7,16 +7,15 @@
 //! by an Area to get a Pressure.
 
 #![deny(warnings, missing_docs)]
-
-#![cfg_attr(feature="no_std", no_std)]
+#![cfg_attr(feature = "no_std", no_std)]
 
 #[cfg(feature = "no_std")]
 use core as std;
 #[cfg(feature = "no_std")]
-use core::time as time;
+use core::time;
 
 #[cfg(not(feature = "no_std"))]
-use std::time as time;
+use std::time;
 
 #[cfg(feature = "serde")]
 #[macro_use]
@@ -25,7 +24,7 @@ extern crate serde;
 #[cfg(feature = "from_str")]
 extern crate regex;
 
-use std::f64::consts::PI as PI;
+use std::f64::consts::PI;
 
 #[macro_use]
 mod measurement;
@@ -37,11 +36,17 @@ pub use length::{Distance, Length};
 pub mod temperature;
 pub use temperature::{Temperature, TemperatureDelta};
 
+pub mod humidity;
+pub use humidity::Humidity;
+
 pub mod mass;
 pub use mass::Mass;
 
 pub mod volume;
 pub use volume::Volume;
+
+pub mod density;
+pub use density::Density;
 
 pub mod pressure;
 pub use pressure::Pressure;
@@ -151,7 +156,7 @@ macro_rules! impl_maths {
                 Self::Output::from_base_units(self.as_base_units() / rhs.as_base_units())
             }
         }
-    }
+    };
 }
 
 impl Measurement for time::Duration {
@@ -221,4 +226,3 @@ impl std::ops::Div<Force> for Energy {
         Self::Output::from_base_units(self.as_base_units() / rhs.as_base_units())
     }
 }
-
