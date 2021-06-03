@@ -36,7 +36,7 @@ pub struct Power {
 impl Power {
     /// Create a new Power from a floating point value in Watts
     pub fn from_watts(watts: f64) -> Power {
-        Power { watts: watts }
+        Power { watts }
     }
 
     /// Create a new Power from a floating point value in milliwatts

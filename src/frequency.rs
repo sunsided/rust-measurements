@@ -41,7 +41,7 @@ pub type Distance = Frequency;
 impl Frequency {
     /// Create a new Frequency from a floating point value in hertz
     pub fn from_hertz(hertz: f64) -> Self {
-        Frequency { hertz: hertz }
+        Frequency { hertz }
     }
 
     /// Create a new Frequency from a floating point value in Nanohertz.
