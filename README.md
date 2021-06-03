@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/thejpster/rust-measurements.svg)](https://travis-ci.org/thejpster/rust-measurements)
-
 # Type-safe units of measure for Rust
+
+[![Build Status](https://github.com/rust-embedded-community/rust-measurements/workflows/Build/badge.svg)](https://github.com/rust-embedded-community/rust-measurements/actions?query=workflow%3ABuild)
 
 ### Why should I care? I already have numbers...
 
