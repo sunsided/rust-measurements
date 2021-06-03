@@ -1,8 +1,11 @@
 //! Types and constants for handling humidity.
 
 use super::measurement::*;
+#[cfg(not(feature = "no_std"))]
 use density::Density;
+#[cfg(not(feature = "no_std"))]
 use pressure::Pressure;
+#[cfg(not(feature = "no_std"))]
 use temperature::Temperature;
 
 /// The `Humidity` struct can be used to deal with relative humidity
@@ -32,7 +35,9 @@ use temperature::Temperature;
 ///
 ///     let humidity = Humidity::from_percent(85.0);
 ///     let temp = Temperature::from_celsius(18.0);
+///     #[cfg(not(feature="no_std"))]
 ///     let dewpoint = humidity.as_dewpoint(temp);
+///     #[cfg(not(feature="no_std"))]
 ///     println!("At {} humidity, air at {} has a dewpoint of {}", humidity, temp, dewpoint);
 ///
 /// ```
@@ -162,6 +167,7 @@ mod test {
         assert_almost_eq(o, 0.1);
     }
     // Dewpoint calculation
+    #[cfg(not(feature = "no_std"))]
     #[test]
     fn to_dewpoint1() {
         let humidity = Humidity::from_percent(85.0);
@@ -169,6 +175,7 @@ mod test {
         let dewpoint = humidity.as_dewpoint(temp);
         assert_almost_eq(dewpoint.as_celsius(), 15.44);
     }
+    #[cfg(not(feature = "no_std"))]
     #[test]
     fn to_dewpoint2() {
         let humidity = Humidity::from_percent(40.0);
@@ -176,6 +183,7 @@ mod test {
         let dewpoint = humidity.as_dewpoint(temp);
         assert_almost_eq(dewpoint.as_celsius(), -7.5);
     }
+    #[cfg(not(feature = "no_std"))]
     #[test]
     fn to_dewpoint3() {
         let humidity = Humidity::from_percent(95.0);
@@ -183,6 +191,7 @@ mod test {
         let dewpoint = humidity.as_dewpoint(temp);
         assert_almost_eq(dewpoint.as_celsius(), 29.11);
     }
+    #[cfg(not(feature = "no_std"))]
     #[test]
     fn from_dewpoint1() {
         let temp = Temperature::from_celsius(18.0);
@@ -190,6 +199,7 @@ mod test {
         let rh = Humidity::from_dewpoint(dewpoint, temp);
         assert_almost_eq(rh.as_percent(), 85.0);
     }
+    #[cfg(not(feature = "no_std"))]
     #[test]
     fn vapour_pressure() {
         let humidity = Humidity::from_percent(60.0);
@@ -197,6 +207,7 @@ mod test {
         let vp = humidity.as_vapor_pressure(temp);
         assert_almost_eq(vp.as_hectopascals(), 19.011);
     }
+    #[cfg(not(feature = "no_std"))]
     #[test]
     // also tests as_vapor_pressure() on the fly
     fn absolute_humidity() {
@@ -205,6 +216,7 @@ mod test {
         let density = humidity.as_absolute_humidity(temp);
         assert_almost_eq(density.as_kilograms_per_cubic_meter(), 0.0138166);
     }
+    #[cfg(not(feature = "no_std"))]
     #[test]
     // round-trip test
     fn from_dewpoint2() {
