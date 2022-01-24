@@ -6,16 +6,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [0.10.3]
+## [0.10.4]
 
 ### Added
 
-- This Changelog.
 - Humidity and density in [#27](https://github.com/rust-embedded-community/rust-measurements/pull/27)
+- Support for parsing many values from strings.
 
 ### Changed
 
 - Merged in [#36](https://github.com/rust-embedded-community/rust-measurements/pull/36) to adjust bounds on `Measurements::pick_appropriate_units()`, which changes the return value for cases when the value is 1.0.
+- More accurate factors for meter to inch, feet, yard, furlong, mile.
+
+## [0.10.3]
+
+### Added
+- This Changelog.
+- Serde support.
 
 ## [0.10.2]
 
@@ -65,7 +72,8 @@ Adds:
 
 Changed Pressure to be in Pascals. Also add a bunch of tests and doc fixes.
 
-[Unreleased]: https://github.com/rust-embedded-community/rust-measurements/compare/v0.10.3...HEAD
+[Unreleased]: https://github.com/rust-embedded-community/rust-measurements/compare/v0.10.4...HEAD
+[0.10.4]: https://github.com/rust-embedded-community/rust-measurements/compare/v0.10.3...v0.10.4
 [0.10.3]: https://github.com/rust-embedded-community/rust-measurements/compare/v0.10.2...v0.10.3
 [0.10.2]: https://github.com/rust-embedded-community/rust-measurements/compare/v0.10.1...v0.10.2
 [0.10.1]: https://github.com/rust-embedded-community/rust-measurements/compare/v0.10.0...v0.10.1
