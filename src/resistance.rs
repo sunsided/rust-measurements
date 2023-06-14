@@ -17,48 +17,57 @@ use super::measurement::*;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Resistance {
-    ohms: f64,
+pub struct Resistance<T>
+where
+    T: num_traits::Float,
+{
+    ohms: T,
 }
 
-impl Resistance {
+impl<T> Resistance<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Resistance from a floating point value in ohms
-    pub fn from_ohms(ohms: f64) -> Self {
+    pub fn from_ohms(ohms: T) -> Self {
         Resistance { ohms }
     }
 
     /// Create a new Resistance from a floating point value in kiloohms
-    pub fn from_kiloohms(kiloohms: f64) -> Self {
+    pub fn from_kiloohms(kiloohms: T) -> Self {
         Self::from_ohms(kiloohms * 1000.0)
     }
 
     /// Create a new Resistance from a floating point value in milliohms
-    pub fn from_megaohms(megaohms: f64) -> Self {
+    pub fn from_megaohms(megaohms: T) -> Self {
         Self::from_ohms(megaohms * 1000.0 * 1000.0)
     }
 
     /// Convert this Resistance into a floating point value in ohms
-    pub fn as_ohms(&self) -> f64 {
+    pub fn as_ohms(&self) -> T {
         self.ohms
     }
 
     /// Convert this Resistance into a floating point value in kiloohms
-    pub fn as_kiloohms(&self) -> f64 {
+    pub fn as_kiloohms(&self) -> T {
         self.ohms / 1000.0
     }
 
     /// Convert this Resistance into a floating point value in milliohms
-    pub fn as_megaohms(&self) -> f64 {
+    pub fn as_megaohms(&self) -> T {
         self.ohms / 1000.0 / 1000.0
     }
 }
 
-impl Measurement for Resistance {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Resistance<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.ohms
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_ohms(units)
     }
 
@@ -66,7 +75,7 @@ impl Measurement for Resistance {
         "\u{2126}"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         // Smallest to Largest
         let list = [
             ("f\u{2126}", 1e-15),
@@ -86,7 +95,7 @@ impl Measurement for Resistance {
     }
 }
 
-implement_measurement! { Resistance }
+implement_measurement! { Resistance<T> }
 
 #[cfg(test)]
 mod test {

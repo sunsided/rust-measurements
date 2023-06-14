@@ -11,15 +11,15 @@
 /// use measurements::Measurement;
 ///
 /// struct Cubits {
-///     forearms: f64
+///     forearms: T
 /// }
 ///
-/// impl Measurement for Cubits {
-///     fn as_base_units(&self) -> f64 {
+/// impl<T> Measurement<T> for Cubits {
+///     fn as_base_units(&self) -> T {
 ///         self.forearms
 ///     }
 ///
-///     fn from_base_units(units: f64) -> Self {
+///     fn from_base_units(units: T) -> Self {
 ///         Cubits { forearms: units }
 ///     }
 ///
@@ -45,7 +45,10 @@ use core::num::Float;
 /// All measurements implement this.
 ///
 /// It provides conversion functions to and from raw numbers.
-pub trait Measurement {
+pub trait Measurement<T>
+where
+    T: num_traits::Float,
+{
     /// Returns a string containing the most appropriate units for this quantity,
     /// and a floating point value representing this quantity in those units.
     /// Useful when, for example, a length might be in millimeters if it is very small,
@@ -53,7 +56,7 @@ pub trait Measurement {
     ///
     /// The default implementation always selects the base unit. Override in your
     /// Measurement  impl to select better units if required.
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         (self.get_base_units_name(), self.as_base_units())
     }
 
@@ -62,7 +65,7 @@ pub trait Measurement {
     ///
     /// The list must be smallest to largest, e.g. ("nanometre", 10-9) to
     /// ("kilometre", 10e3)
-    fn pick_appropriate_units(&self, list: &[(&'static str, f64)]) -> (&'static str, f64) {
+    fn pick_appropriate_units(&self, list: &[(&'static str, T)]) -> (&'static str, T) {
         for &(unit, ref scale) in list.iter().rev() {
             let value = self.as_base_units() / scale;
             if value >= 1.0 || value <= -1.0 {
@@ -77,10 +80,10 @@ pub trait Measurement {
     fn get_base_units_name(&self) -> &'static str;
 
     /// Get this quantity in the base units
-    fn as_base_units(&self) -> f64;
+    fn as_base_units(&self) -> T;
 
     /// Create a new quantity from the base units
-    fn from_base_units(units: f64) -> Self;
+    fn from_base_units(units: T) -> Self;
 }
 
 /// This is a special macro that creates the code to implement
@@ -89,7 +92,7 @@ pub trait Measurement {
 macro_rules! implement_display {
     ($($t:ty)*) => ($(
 
-        impl ::std::fmt::Display for $t {
+        impl<T> ::std::fmt::Display for $t {
             fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
                 let (unit, value) = self.get_appropriate_units();
                 value.fmt(f)?;      // Value
@@ -107,7 +110,7 @@ macro_rules! implement_measurement {
 
         implement_display!( $t );
 
-        impl ::std::ops::Add for $t {
+        impl<T> ::std::ops::Add for $t {
             type Output = Self;
 
             fn add(self, rhs: Self) -> Self {
@@ -115,7 +118,7 @@ macro_rules! implement_measurement {
             }
         }
 
-        impl ::std::ops::Sub for $t {
+        impl<T> ::std::ops::Sub for $t {
             type Output = Self;
 
             fn sub(self, rhs: Self) -> Self {
@@ -125,36 +128,36 @@ macro_rules! implement_measurement {
 
         // Dividing a `$t` by another `$t` returns a ratio.
         //
-        impl ::std::ops::Div<$t> for $t {
-            type Output = f64;
+        impl<T> ::std::ops::Div<$t> for $t {
+            type Output = T;
 
-            fn div(self, rhs: Self) -> f64 {
+            fn div(self, rhs: Self) -> T {
                 self.as_base_units() / rhs.as_base_units()
             }
         }
 
         // Dividing a `$t` by a factor returns a new portion of the measurement.
         //
-        impl ::std::ops::Div<f64> for $t {
+        impl<T> ::std::ops::Div<T> for $t {
             type Output = Self;
 
-            fn div(self, rhs: f64) -> Self {
+            fn div(self, rhs: T) -> Self {
                 Self::from_base_units(self.as_base_units() / rhs)
             }
         }
 
         // Multiplying a `$t` by a factor increases (or decreases) that
         // measurement a number of times.
-        impl ::std::ops::Mul<f64> for $t {
+        impl<T> ::std::ops::Mul<T> for $t {
             type Output = Self;
 
-            fn mul(self, rhs: f64) -> Self {
+            fn mul(self, rhs: T) -> Self {
                 Self::from_base_units(self.as_base_units() * rhs)
             }
         }
 
         // Multiplying `$t` by a factor is commutative
-        impl ::std::ops::Mul<$t> for f64 {
+        impl<T> ::std::ops::Mul<$t> for T {
             type Output = $t;
 
             fn mul(self, rhs: $t) -> $t {
@@ -162,14 +165,14 @@ macro_rules! implement_measurement {
             }
         }
 
-        impl ::std::cmp::Eq for $t { }
-        impl ::std::cmp::PartialEq for $t {
+        impl<T> ::std::cmp::Eq for $t { }
+        impl<T> ::std::cmp::PartialEq for $t {
             fn eq(&self, other: &Self) -> bool {
                 self.as_base_units() == other.as_base_units()
             }
         }
 
-        impl ::std::cmp::PartialOrd for $t {
+        impl<T> ::std::cmp::PartialOrd for $t {
             fn partial_cmp(&self, other: &Self) -> Option<::std::cmp::Ordering> {
                 self.as_base_units().partial_cmp(&other.as_base_units())
             }

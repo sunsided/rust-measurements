@@ -28,52 +28,61 @@ use std::str::FromStr;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Acceleration {
-    meters_per_second_per_second: f64,
+pub struct Acceleration<T>
+where
+    T: num_traits::Float,
+{
+    meters_per_second_per_second: T,
 }
 
-impl Acceleration {
+impl<T> Acceleration<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Acceleration from a floating point value in meters per second per second
-    pub fn from_meters_per_second_per_second(meters_per_second_per_second: f64) -> Acceleration {
+    pub fn from_meters_per_second_per_second(meters_per_second_per_second: T) -> Self {
         Acceleration {
             meters_per_second_per_second,
         }
     }
 
     /// Create a new Acceleration from a floating point value in metres per second per second
-    pub fn from_metres_per_second_per_second(metres_per_second_per_second: f64) -> Acceleration {
+    pub fn from_metres_per_second_per_second(metres_per_second_per_second: T) -> Self {
         Acceleration::from_meters_per_second_per_second(metres_per_second_per_second)
     }
 
     /// Create a new Acceleration from a floating point value in feet per second per second
-    pub fn from_feet_per_second_per_second(feet_per_second_per_second: f64) -> Acceleration {
+    pub fn from_feet_per_second_per_second(feet_per_second_per_second: T) -> Self {
         Acceleration::from_metres_per_second_per_second(
             feet_per_second_per_second / length::METER_FEET_FACTOR,
         )
     }
 
     /// Convert this Acceleration to a value in meters per second per second
-    pub fn as_meters_per_second_per_second(&self) -> f64 {
+    pub fn as_meters_per_second_per_second(&self) -> T {
         self.meters_per_second_per_second
     }
 
     /// Convert this Acceleration to a value in metres per second per second
-    pub fn as_metres_per_second_per_second(&self) -> f64 {
+    pub fn as_metres_per_second_per_second(&self) -> T {
         self.as_meters_per_second_per_second()
     }
 
     /// Convert this Acceleration to a value in feet per second per second
-    pub fn as_feet_per_second_per_second(&self) -> f64 {
+    pub fn as_feet_per_second_per_second(&self) -> T {
         self.meters_per_second_per_second * length::METER_FEET_FACTOR
     }
 }
 
-impl Measurement for Acceleration {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Acceleration<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.meters_per_second_per_second
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_meters_per_second_per_second(units)
     }
 
@@ -83,7 +92,10 @@ impl Measurement for Acceleration {
 }
 
 #[cfg(feature = "from_str")]
-impl FromStr for Acceleration {
+impl<T> FromStr for Acceleration<T>
+where
+    T: num_traits::Float,
+{
     type Err = std::num::ParseFloatError;
 
     /// Create a new Acceleration from a string
@@ -99,23 +111,23 @@ impl FromStr for Acceleration {
             return Ok(
                 match caps.get(2).unwrap().as_str().to_lowercase().as_str() {
                     "m/s" | "m s-1" => {
-                        Acceleration::from_meters_per_second_per_second(float_val.parse::<f64>()?)
+                        Acceleration::from_meters_per_second_per_second(float_val.parse::<T>()?)
                     }
                     "ft/s" | "fps" | "ft s-1" => {
-                        Acceleration::from_feet_per_second_per_second(float_val.parse::<f64>()?)
+                        Acceleration::from_feet_per_second_per_second(float_val.parse::<T>()?)
                     }
-                    _ => Acceleration::from_meters_per_second_per_second(val.parse::<f64>()?),
+                    _ => Acceleration::from_meters_per_second_per_second(val.parse::<T>()?),
                 },
             );
         }
 
         Ok(Acceleration::from_meters_per_second_per_second(
-            val.parse::<f64>()?,
+            val.parse::<T>()?,
         ))
     }
 }
 
-implement_measurement! { Acceleration }
+implement_measurement! { Acceleration<T> }
 
 #[cfg(test)]
 mod test {

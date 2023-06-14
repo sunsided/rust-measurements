@@ -17,58 +17,67 @@ use super::measurement::*;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Current {
-    amperes: f64,
+pub struct Current<T>
+where
+    T: num_traits::Float,
+{
+    amperes: T,
 }
 
-impl Current {
+impl<T> Current<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Current from a floating point value in amperes
-    pub fn from_amperes(amperes: f64) -> Self {
+    pub fn from_amperes(amperes: T) -> Self {
         Current { amperes }
     }
 
     /// Create a new Current from a floating point value in milliamperes
-    pub fn from_milliamperes(milliamperes: f64) -> Self {
+    pub fn from_milliamperes(milliamperes: T) -> Self {
         Self::from_amperes(milliamperes / 1000.0)
     }
 
     /// Create a new Current from a floating point value in microamperes
-    pub fn from_microamperes(microamperes: f64) -> Self {
+    pub fn from_microamperes(microamperes: T) -> Self {
         Self::from_amperes(microamperes / 1000.0 / 1000.0)
     }
 
     /// Create a new Current from a floating point value in nanoamperes
-    pub fn from_nanoamperes(nanoamperes: f64) -> Self {
+    pub fn from_nanoamperes(nanoamperes: T) -> Self {
         Self::from_amperes(nanoamperes / 1_000_000_000.0)
     }
 
     /// Convert this Current into a floating point value in amperes
-    pub fn as_amperes(&self) -> f64 {
+    pub fn as_amperes(&self) -> T {
         self.amperes
     }
 
     /// Convert this Current into a floating point value in milliamperes
-    pub fn as_milliamperes(&self) -> f64 {
+    pub fn as_milliamperes(&self) -> T {
         self.amperes * 1000.0
     }
 
     /// Convert this Current into a floating point value in microamperes
-    pub fn as_microamperes(&self) -> f64 {
+    pub fn as_microamperes(&self) -> T {
         self.amperes * 1000.0 * 1000.0
     }
 
     /// Convert this Current into a floating point value in nanoamperes
-    pub fn as_nanoamperes(&self) -> f64 {
+    pub fn as_nanoamperes(&self) -> T {
         self.amperes * 1_000_000_000.0
     }
 }
 
-impl Measurement for Current {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Current<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.amperes
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_amperes(units)
     }
 
@@ -76,7 +85,7 @@ impl Measurement for Current {
         "A"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         // Smallest to Largest
         let list = [
             ("fA", 1e-15),
@@ -96,7 +105,7 @@ impl Measurement for Current {
     }
 }
 
-implement_measurement! { Current }
+implement_measurement! { Current<T> }
 
 #[cfg(test)]
 mod test {

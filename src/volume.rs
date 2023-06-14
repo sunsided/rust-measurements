@@ -20,8 +20,8 @@ use std::str::FromStr;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Volume {
-    liters: f64,
+pub struct Volume<T> {
+    liters: T,
 }
 
 /// Number of Milliliters in a litre
@@ -61,244 +61,250 @@ pub const LITER_CUBIC_FEET_FACTOR: f64 = 0.0353146667215;
 /// Number of Cubic Yards in a litre
 pub const LITER_CUBIC_YARD_FACTOR: f64 = 0.0013079506193;
 
-impl Volume {
+impl<T> Volume<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Volume from a floating point value in Liters (l)
-    pub fn from_liters(liters: f64) -> Self {
+    pub fn from_liters(liters: T) -> Self {
         Volume { liters }
     }
 
     /// Create a new Volume from a floating point value in Litres (l)
-    pub fn from_litres(liters: f64) -> Self {
+    pub fn from_litres(liters: T) -> Self {
         Self::from_liters(liters)
     }
 
     /// Create a new Volume from a floating point value in Cubic Centimeters (cc or cm³)
-    pub fn from_cubic_centimeters(cubic_centimeters: f64) -> Self {
+    pub fn from_cubic_centimeters(cubic_centimeters: T) -> Self {
         Self::from_liters(cubic_centimeters / LITER_CUBIC_CENTIMETER_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in Cubic Centimetres (cc or cm³)
-    pub fn from_cubic_centimetres(cubic_centimeters: f64) -> Self {
+    pub fn from_cubic_centimetres(cubic_centimeters: T) -> Self {
         Self::from_cubic_centimeters(cubic_centimeters)
     }
 
     /// Create a new Volume from a floating point value in Milliliters (ml)
-    pub fn from_milliliters(milliliters: f64) -> Self {
+    pub fn from_milliliters(milliliters: T) -> Self {
         Self::from_liters(milliliters / LITER_MILLILITERS_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in Millilitres (ml)
-    pub fn from_millilitres(milliliters: f64) -> Self {
+    pub fn from_millilitres(milliliters: T) -> Self {
         Self::from_milliliters(milliliters)
     }
 
     /// Create a new Volume from a floating point value in Cubic Meters (m³)
-    pub fn from_cubic_meters(cubic_meters: f64) -> Self {
+    pub fn from_cubic_meters(cubic_meters: T) -> Self {
         Self::from_liters(cubic_meters / LITER_CUBIC_METER_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in Cubic Metres (m³)
-    pub fn from_cubic_metres(cubic_meters: f64) -> Self {
+    pub fn from_cubic_metres(cubic_meters: T) -> Self {
         Self::from_cubic_meters(cubic_meters)
     }
 
     /// Create a new Volume from a floating point value in Drops
-    pub fn from_drops(drops: f64) -> Self {
+    pub fn from_drops(drops: T) -> Self {
         Self::from_liters(drops / LITER_DROP_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in US Fluid Drams
-    pub fn from_drams(drams: f64) -> Self {
+    pub fn from_drams(drams: T) -> Self {
         Self::from_liters(drams / LITER_DRAM_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in Teaspoons (tsp)
-    pub fn from_teaspoons(teaspoons: f64) -> Self {
+    pub fn from_teaspoons(teaspoons: T) -> Self {
         Self::from_liters(teaspoons / LITER_TEASPOONS_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in Tablespoons (tbsp)
-    pub fn from_tablespoons(tablespoons: f64) -> Self {
+    pub fn from_tablespoons(tablespoons: T) -> Self {
         Self::from_liters(tablespoons / LITER_TABLESPOONS_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in UK Fluid Ounces (fl oz)
-    pub fn from_fluid_ounces_uk(fluid_ounces_uk: f64) -> Self {
+    pub fn from_fluid_ounces_uk(fluid_ounces_uk: T) -> Self {
         Self::from_liters(fluid_ounces_uk / LITER_FLUID_OUNCES_UK_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in US Fluid Ounces (fl oz)
-    pub fn from_fluid_ounces(fluid_ounces: f64) -> Self {
+    pub fn from_fluid_ounces(fluid_ounces: T) -> Self {
         Self::from_liters(fluid_ounces / LITER_FLUID_OUNCES_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in Cubic Inches (cu in or in³)
-    pub fn from_cubic_inches(cubic_inches: f64) -> Self {
+    pub fn from_cubic_inches(cubic_inches: T) -> Self {
         Self::from_liters(cubic_inches / LITER_CUBIC_INCHES_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in Cups
-    pub fn from_cups(cups: f64) -> Self {
+    pub fn from_cups(cups: T) -> Self {
         Self::from_liters(cups / LITER_CUP_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in US Pints
-    pub fn from_pints(pints: f64) -> Self {
+    pub fn from_pints(pints: T) -> Self {
         Self::from_liters(pints / LITER_PINTS_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in UK Pints
-    pub fn from_pints_uk(pints_uk: f64) -> Self {
+    pub fn from_pints_uk(pints_uk: T) -> Self {
         Self::from_liters(pints_uk / LITER_PINTS_UK_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in Quarts
-    pub fn from_quarts(quarts: f64) -> Self {
+    pub fn from_quarts(quarts: T) -> Self {
         Self::from_liters(quarts / LITER_QUARTS_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in US Gallons (gal US)
-    pub fn from_gallons(gallons: f64) -> Self {
+    pub fn from_gallons(gallons: T) -> Self {
         Self::from_liters(gallons / LITER_GALLONS_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in UK/Imperial Gallons (gal)
-    pub fn from_gallons_uk(gallons_uk: f64) -> Self {
+    pub fn from_gallons_uk(gallons_uk: T) -> Self {
         Self::from_liters(gallons_uk / LITER_GALLONS_UK_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in Cubic Feet (ft³)
-    pub fn from_cubic_feet(cubic_feet: f64) -> Self {
+    pub fn from_cubic_feet(cubic_feet: T) -> Self {
         Self::from_liters(cubic_feet / LITER_CUBIC_FEET_FACTOR)
     }
 
     /// Create a new Volume from a floating point value in Cubic Yards (yd³)
-    pub fn from_cubic_yards(cubic_yards: f64) -> Self {
+    pub fn from_cubic_yards(cubic_yards: T) -> Self {
         Self::from_liters(cubic_yards / LITER_CUBIC_YARD_FACTOR)
     }
 
     /// Convert Volume to a floating point value in Cubic Centimeters (cc or cm³)
-    pub fn as_cubic_centimeters(&self) -> f64 {
+    pub fn as_cubic_centimeters(&self) -> T {
         self.liters * LITER_CUBIC_CENTIMETER_FACTOR
     }
 
     /// Convert Volume to a floating point value in Cubic Centimetres (cc or cm³)
-    pub fn as_cubic_centimetres(&self) -> f64 {
+    pub fn as_cubic_centimetres(&self) -> T {
         self.as_cubic_centimeters()
     }
 
     /// Convert Volume to a floating point value in Milliliters (ml)
-    pub fn as_milliliters(&self) -> f64 {
+    pub fn as_milliliters(&self) -> T {
         self.liters * LITER_MILLILITERS_FACTOR
     }
 
     /// Convert Volume to a floating point value in Millilitres (ml)
-    pub fn as_millilitres(&self) -> f64 {
+    pub fn as_millilitres(&self) -> T {
         self.as_milliliters()
     }
 
     /// Convert Volume to a floating point value in Liters (l)
-    pub fn as_liters(&self) -> f64 {
+    pub fn as_liters(&self) -> T {
         self.liters
     }
 
     /// Convert Volume to a floating point value in Litres (l)
-    pub fn as_litres(&self) -> f64 {
+    pub fn as_litres(&self) -> T {
         self.as_liters()
     }
 
     /// Convert Volume to a floating point value in Cubic Meters (m³)
-    pub fn as_cubic_meters(&self) -> f64 {
+    pub fn as_cubic_meters(&self) -> T {
         self.liters * LITER_CUBIC_METER_FACTOR
     }
 
     /// Convert Volume to a floating point value in Cubic Metres (m³)
-    pub fn as_cubic_metres(&self) -> f64 {
+    pub fn as_cubic_metres(&self) -> T {
         self.as_cubic_meters()
     }
 
     /// Convert Volume to a floating point value in Drops
-    pub fn as_drops(&self) -> f64 {
+    pub fn as_drops(&self) -> T {
         self.liters * LITER_DROP_FACTOR
     }
 
     /// Convert Volume to a floating point value in US Fluid Drams
-    pub fn as_drams(&self) -> f64 {
+    pub fn as_drams(&self) -> T {
         self.liters * LITER_DRAM_FACTOR
     }
 
     /// Convert Volume to a floating point value in Teaspoons (tsp)
-    pub fn as_teaspoons(&self) -> f64 {
+    pub fn as_teaspoons(&self) -> T {
         self.liters * LITER_TEASPOONS_FACTOR
     }
 
     /// Convert Volume to a floating point value in Tablespoons (tbsp)
-    pub fn as_tablespoons(&self) -> f64 {
+    pub fn as_tablespoons(&self) -> T {
         self.liters * LITER_TABLESPOONS_FACTOR
     }
 
     /// Convert Volume to a floating point value in Cubic Inches (cu in or in³)
-    pub fn as_cubic_inches(&self) -> f64 {
+    pub fn as_cubic_inches(&self) -> T {
         self.liters * LITER_CUBIC_INCHES_FACTOR
     }
 
     /// Convert Volume to a floating point value in UK Fluid Ounces (fl oz)
-    pub fn as_fluid_ounces_uk(&self) -> f64 {
+    pub fn as_fluid_ounces_uk(&self) -> T {
         self.liters * LITER_FLUID_OUNCES_UK_FACTOR
     }
 
     /// Convert Volume to a floating point value in US Fluid Ounces (fl oz)
-    pub fn as_fluid_ounces(&self) -> f64 {
+    pub fn as_fluid_ounces(&self) -> T {
         self.liters * LITER_FLUID_OUNCES_FACTOR
     }
 
     /// Convert Volume to a floating point value in Cups
-    pub fn as_cups(&self) -> f64 {
+    pub fn as_cups(&self) -> T {
         self.liters * LITER_CUP_FACTOR
     }
 
     /// Convert Volume to a floating point value in US Pints
-    pub fn as_pints(&self) -> f64 {
+    pub fn as_pints(&self) -> T {
         self.liters * LITER_PINTS_FACTOR
     }
 
     /// Convert Volume to a floating point value in UK Pints
-    pub fn as_pints_uk(&self) -> f64 {
+    pub fn as_pints_uk(&self) -> T {
         self.liters * LITER_PINTS_UK_FACTOR
     }
 
     /// Convert Volume to a floating point value in Quarts
-    pub fn as_quarts(&self) -> f64 {
+    pub fn as_quarts(&self) -> T {
         self.liters * LITER_QUARTS_FACTOR
     }
 
     /// Convert Volume to a floating point value in US Gallons (gal us)
-    pub fn as_gallons(&self) -> f64 {
+    pub fn as_gallons(&self) -> T {
         self.liters * LITER_GALLONS_FACTOR
     }
 
     /// Convert Volume to a floating point value in UK/Imperial Gallons (gal)
-    pub fn as_gallons_uk(&self) -> f64 {
+    pub fn as_gallons_uk(&self) -> T {
         self.liters * LITER_GALLONS_UK_FACTOR
     }
 
     /// Convert Volume to a floating point value in Cubic Feet (ft³)
-    pub fn as_cubic_feet(&self) -> f64 {
+    pub fn as_cubic_feet(&self) -> T {
         self.liters * LITER_CUBIC_FEET_FACTOR
     }
 
     /// Convert Volume to a floating point value in Cubic Yards (yd³)
-    pub fn as_cubic_yards(&self) -> f64 {
+    pub fn as_cubic_yards(&self) -> T {
         self.liters * LITER_CUBIC_YARD_FACTOR
     }
 }
 
-impl Measurement for Volume {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Volume<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.liters
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_liters(units)
     }
 
@@ -306,7 +312,7 @@ impl Measurement for Volume {
         "l"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         // Smallest to largest
         let list = [
             ("pl", 1e-12),
@@ -322,7 +328,10 @@ impl Measurement for Volume {
 }
 
 #[cfg(feature = "from_str")]
-impl FromStr for Volume {
+impl<T> FromStr for Volume<T>
+where
+    T: num_traits::Float,
+{
     type Err = std::num::ParseFloatError;
 
     /// Create a new Volume from a string
@@ -338,37 +347,35 @@ impl FromStr for Volume {
             let float_val = caps.get(1).unwrap().as_str();
             return Ok(
                 match caps.get(2).unwrap().as_str().to_lowercase().as_str() {
-                    "cm3" | "cm\u{00b3}" => {
-                        Volume::from_cubic_centimeters(float_val.parse::<f64>()?)
-                    }
-                    "ft3" | "ft\u{00b3}" => Volume::from_cubic_feet(float_val.parse::<f64>()?),
-                    "yd3" | "yd\u{00b3}" => Volume::from_cubic_yards(float_val.parse::<f64>()?),
-                    "in3" | "in\u{00b3}" => Volume::from_cubic_inches(float_val.parse::<f64>()?),
-                    "gal" | "us gal" => Volume::from_gallons(float_val.parse::<f64>()?),
-                    "imp gal" => Volume::from_gallons_uk(float_val.parse::<f64>()?),
-                    "cup" => Volume::from_cups(float_val.parse::<f64>()?),
-                    "tsp" => Volume::from_teaspoons(float_val.parse::<f64>()?),
-                    "tbsp" | "t." => Volume::from_tablespoons(float_val.parse::<f64>()?),
-                    "ml" => Volume::from_milliliters(float_val.parse::<f64>()?),
-                    "us fl oz" | "fl oz" => Volume::from_fluid_ounces(float_val.parse::<f64>()?),
-                    "imp fl oz" => Volume::from_fluid_ounces_uk(float_val.parse::<f64>()?),
-                    "m3" | "m\u{00b3}" => Volume::from_cubic_meters(float_val.parse::<f64>()?),
-                    "gt" | "gtt" => Volume::from_drops(float_val.parse::<f64>()?),
-                    "dr" => Volume::from_drams(float_val.parse::<f64>()?),
-                    "l" => Volume::from_litres(float_val.parse::<f64>()?),
-                    "qt" => Volume::from_quarts(float_val.parse::<f64>()?),
-                    "us pt" | "us p" | "p" | "pt" => Volume::from_pints(float_val.parse::<f64>()?),
-                    "imp pt" | "imp p" => Volume::from_pints_uk(float_val.parse::<f64>()?),
-                    _ => Volume::from_litres(val.parse::<f64>()?),
+                    "cm3" | "cm\u{00b3}" => Volume::from_cubic_centimeters(float_val.parse::<T>()?),
+                    "ft3" | "ft\u{00b3}" => Volume::from_cubic_feet(float_val.parse::<T>()?),
+                    "yd3" | "yd\u{00b3}" => Volume::from_cubic_yards(float_val.parse::<T>()?),
+                    "in3" | "in\u{00b3}" => Volume::from_cubic_inches(float_val.parse::<T>()?),
+                    "gal" | "us gal" => Volume::from_gallons(float_val.parse::<T>()?),
+                    "imp gal" => Volume::from_gallons_uk(float_val.parse::<T>()?),
+                    "cup" => Volume::from_cups(float_val.parse::<T>()?),
+                    "tsp" => Volume::from_teaspoons(float_val.parse::<T>()?),
+                    "tbsp" | "t." => Volume::from_tablespoons(float_val.parse::<T>()?),
+                    "ml" => Volume::from_milliliters(float_val.parse::<T>()?),
+                    "us fl oz" | "fl oz" => Volume::from_fluid_ounces(float_val.parse::<T>()?),
+                    "imp fl oz" => Volume::from_fluid_ounces_uk(float_val.parse::<T>()?),
+                    "m3" | "m\u{00b3}" => Volume::from_cubic_meters(float_val.parse::<T>()?),
+                    "gt" | "gtt" => Volume::from_drops(float_val.parse::<T>()?),
+                    "dr" => Volume::from_drams(float_val.parse::<T>()?),
+                    "l" => Volume::from_litres(float_val.parse::<T>()?),
+                    "qt" => Volume::from_quarts(float_val.parse::<T>()?),
+                    "us pt" | "us p" | "p" | "pt" => Volume::from_pints(float_val.parse::<T>()?),
+                    "imp pt" | "imp p" => Volume::from_pints_uk(float_val.parse::<T>()?),
+                    _ => Volume::from_litres(val.parse::<T>()?),
                 },
             );
         }
 
-        Ok(Volume::from_liters(val.parse::<f64>()?))
+        Ok(Volume::from_liters(val.parse::<T>()?))
     }
 }
 
-implement_measurement! { Volume }
+implement_measurement! { Volume<T> }
 
 #[cfg(test)]
 mod test {

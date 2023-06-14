@@ -29,88 +29,97 @@ pub const PASCAL_PSI_FACTOR: f64 = 6894.76;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Pressure {
-    pascals: f64,
+pub struct Pressure<T>
+where
+    T: num_traits::Float,
+{
+    pascals: T,
 }
 
-impl Pressure {
+impl<T> Pressure<T>
+where
+    T: num_traits::Float,
+{
     /// Create new Pressure from floating point value in Pascals (Pa)
-    pub fn from_pascals(pascals: f64) -> Pressure {
+    pub fn from_pascals(pascals: T) -> Self {
         Pressure { pascals }
     }
 
     /// Create new Pressure from floating point value in hectopascals (hPA)
-    pub fn from_hectopascals(hectopascals: f64) -> Pressure {
+    pub fn from_hectopascals(hectopascals: T) -> Self {
         Self::from_pascals(hectopascals * PASCAL_HECTOPASCAL_FACTOR)
     }
 
     /// Create new Pressure from floating point value in millibars (mBar)
-    pub fn from_millibars(millibars: f64) -> Pressure {
+    pub fn from_millibars(millibars: T) -> Self {
         Self::from_pascals(millibars * PASCAL_MILLIBAR_FACTOR)
     }
 
     /// Create new Pressure from floating point value in kilopascals (kPa)
-    pub fn from_kilopascals(kilopascals: f64) -> Pressure {
+    pub fn from_kilopascals(kilopascals: T) -> Self {
         Self::from_pascals(kilopascals * PASCAL_KILOPASCAL_FACTOR)
     }
 
     /// Create new Pressure from floating point value in psi
-    pub fn from_psi(psi: f64) -> Pressure {
+    pub fn from_psi(psi: T) -> Self {
         Self::from_pascals(psi * PASCAL_PSI_FACTOR)
     }
 
     /// Create new Pressure from floating point value in Bar
-    pub fn from_bars(bars: f64) -> Pressure {
+    pub fn from_bars(bars: T) -> Self {
         Self::from_pascals(bars * PASCAL_BAR_FACTOR)
     }
 
     /// Create new Pressure from floating point value in Atmospheres
-    pub fn from_atmospheres(atmospheres: f64) -> Pressure {
+    pub fn from_atmospheres(atmospheres: T) -> Self {
         Self::from_pascals(atmospheres * PASCAL_ATMOSPHERE_FACTOR)
     }
 
     /// Convert this Pressure into a floating point value in Pascals
-    pub fn as_pascals(&self) -> f64 {
+    pub fn as_pascals(&self) -> T {
         self.pascals
     }
 
     /// Convert this Pressure into a floating point value in hectopascals (hPA)
-    pub fn as_hectopascals(&self) -> f64 {
+    pub fn as_hectopascals(&self) -> T {
         self.pascals / PASCAL_HECTOPASCAL_FACTOR
     }
 
     /// Convert this Pressure into a floating point value in millibars (mBar)
-    pub fn as_millibars(&self) -> f64 {
+    pub fn as_millibars(&self) -> T {
         self.pascals / PASCAL_MILLIBAR_FACTOR
     }
 
     /// Convert this Pressure into a floating point value in kilopascals (kPA)
-    pub fn as_kilopascals(&self) -> f64 {
+    pub fn as_kilopascals(&self) -> T {
         self.pascals / PASCAL_KILOPASCAL_FACTOR
     }
 
     /// Convert this Pressure into a floating point value in pounds per square-inch (psi)
-    pub fn as_psi(&self) -> f64 {
+    pub fn as_psi(&self) -> T {
         self.pascals / PASCAL_PSI_FACTOR
     }
 
     /// Convert this Pressure into a floating point value in Bar
-    pub fn as_bars(&self) -> f64 {
+    pub fn as_bars(&self) -> T {
         self.pascals / PASCAL_BAR_FACTOR
     }
 
     /// Convert this Pressure into a floating point value in Atmospheres
-    pub fn as_atmospheres(&self) -> f64 {
+    pub fn as_atmospheres(&self) -> T {
         self.pascals / PASCAL_ATMOSPHERE_FACTOR
     }
 }
 
-impl Measurement for Pressure {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Pressure<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.pascals
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_pascals(units)
     }
 
@@ -118,7 +127,7 @@ impl Measurement for Pressure {
         "Pa"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         let list = [
             ("mPa", 1e-3),
             ("Pa", 1e0),
@@ -132,7 +141,7 @@ impl Measurement for Pressure {
     }
 }
 
-implement_measurement! { Pressure }
+implement_measurement! { Pressure<T> }
 
 #[cfg(test)]
 mod test {

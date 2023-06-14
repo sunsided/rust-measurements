@@ -23,95 +23,104 @@ pub const DYNES_PER_NEWTON: f64 = 1e5;
 ///
 /// let metric_ton = Mass::from_metric_tons(1.0);
 /// let gravity = Acceleration::from_meters_per_second_per_second(9.81);
-/// let force: Force = metric_ton * gravity; // F=ma
+/// let force: Force<_> = metric_ton * gravity; // F=ma
 /// println!(
 ///     "One metric ton exerts a force of {} due to gravity",
 ///     force);
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Force {
-    newtons: f64,
+pub struct Force<T>
+where
+    T: num_traits::Float,
+{
+    newtons: T,
 }
 
-impl Force {
+impl<T> Force<T>
+where
+    T: num_traits::Float,
+{
     /// Create a Force from a floating point value in Newtons
-    pub fn from_newtons(newtons: f64) -> Self {
+    pub fn from_newtons(newtons: T) -> Self {
         Force { newtons }
     }
 
     /// Create a Force from a floating point value in Micronewtons
-    pub fn from_micronewtons(micronewtons: f64) -> Self {
+    pub fn from_micronewtons(micronewtons: T) -> Self {
         Self::from_newtons(micronewtons / 1e6)
     }
 
     /// Create a Force from a floating point value in Millinewtons
-    pub fn from_millinewtons(millinewtons: f64) -> Self {
+    pub fn from_millinewtons(millinewtons: T) -> Self {
         Self::from_newtons(millinewtons / 1e3)
     }
 
     /// Create a Force from a floating point value in pounds
-    pub fn from_pounds(pounds: f64) -> Self {
+    pub fn from_pounds(pounds: T) -> Self {
         Self::from_newtons(pounds / POUNDS_PER_NEWTON)
     }
 
     /// Create a Force from a floating point value in poundals
-    pub fn from_poundals(poundals: f64) -> Self {
+    pub fn from_poundals(poundals: T) -> Self {
         Self::from_newtons(poundals / POUNDALS_PER_NEWTON)
     }
 
     /// Create a Force from a floating point value in kiloponds
-    pub fn from_kiloponds(kiloponds: f64) -> Self {
+    pub fn from_kiloponds(kiloponds: T) -> Self {
         Self::from_newtons(kiloponds / KILOPONDS_PER_NEWTON)
     }
 
     /// Create a Force from a floating point value in Dynes
-    pub fn from_dynes(dynes: f64) -> Self {
+    pub fn from_dynes(dynes: T) -> Self {
         Self::from_newtons(dynes / DYNES_PER_NEWTON)
     }
 
     /// Convert this Force into a floating point value in Micronewtons
-    pub fn as_micronewtons(&self) -> f64 {
+    pub fn as_micronewtons(&self) -> T {
         self.newtons * 1e6
     }
 
     /// Convert this Force into a floating point value in Milliewtons
-    pub fn as_millinewtons(&self) -> f64 {
+    pub fn as_millinewtons(&self) -> T {
         self.newtons * 1e3
     }
 
     /// Convert this Force into a floating point value in Newtons
-    pub fn as_newtons(&self) -> f64 {
+    pub fn as_newtons(&self) -> T {
         self.newtons
     }
 
     /// Convert this Force into a floating point value in pound-force (lb.f)
-    pub fn as_pounds(&self) -> f64 {
+    pub fn as_pounds(&self) -> T {
         self.newtons * POUNDS_PER_NEWTON
     }
 
     /// Convert this Force into a floating point value in poundals
-    pub fn as_poundals(&self) -> f64 {
+    pub fn as_poundals(&self) -> T {
         self.newtons * POUNDALS_PER_NEWTON
     }
 
     /// Convert this Force into a floating point value in kiloponds
-    pub fn as_kiloponds(&self) -> f64 {
+    pub fn as_kiloponds(&self) -> T {
         self.newtons * KILOPONDS_PER_NEWTON
     }
 
     /// Convert this Force into a floating point value in dynes
-    pub fn as_dynes(&self) -> f64 {
+    pub fn as_dynes(&self) -> T {
         self.newtons * DYNES_PER_NEWTON
     }
 }
 
-impl Measurement for Force {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Force<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.newtons
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_newtons(units)
     }
 
@@ -119,7 +128,7 @@ impl Measurement for Force {
         "N"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         // Smallest to largest
         let list = [
             ("nN", 1e-9),
@@ -135,7 +144,7 @@ impl Measurement for Force {
     }
 }
 
-implement_measurement! { Force }
+implement_measurement! { Force<T> }
 
 #[cfg(test)]
 mod test {

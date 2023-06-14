@@ -45,76 +45,97 @@ pub const LBCF_KGCM_FACTOR: f64 = 0.062427973725314;
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Density {
-    kilograms_per_cubic_meter: f64,
+pub struct Density<T>
+where
+    T: num_traits::Float,
+{
+    kilograms_per_cubic_meter: T,
 }
 
-impl Density {
+impl<T> Density<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Density from a floating point value in kilograms per cubic meter
-    pub fn from_kilograms_per_cubic_meter(kilograms_per_cubic_meter: f64) -> Density {
+    pub fn from_kilograms_per_cubic_meter(kilograms_per_cubic_meter: T) -> Self {
         Density {
             kilograms_per_cubic_meter,
         }
     }
 
     /// Create a new Density from a floating point value in pounds per cubic feet
-    pub fn from_pounds_per_cubic_feet(pounds_per_cubic_foot: f64) -> Density {
+    pub fn from_pounds_per_cubic_feet(pounds_per_cubic_foot: T) -> Self {
         Density::from_kilograms_per_cubic_meter(pounds_per_cubic_foot / LBCF_KGCM_FACTOR)
     }
 
     /// Convert this Density to a value in kilograms per cubic meter
-    pub fn as_kilograms_per_cubic_meter(&self) -> f64 {
+    pub fn as_kilograms_per_cubic_meter(&self) -> T {
         self.kilograms_per_cubic_meter
     }
 
     /// Convert this Density to a value in pounds per cubic feet
-    pub fn as_pounds_per_cubic_feet(&self) -> f64 {
+    pub fn as_pounds_per_cubic_feet(&self) -> T {
         self.kilograms_per_cubic_meter * LBCF_KGCM_FACTOR
     }
 }
 
 // mass / volume = density
-impl ::std::ops::Div<Volume> for Mass {
-    type Output = Density;
+impl<T> ::std::ops::Div<Volume<T>> for Mass<T>
+where
+    T: num_traits::Float,
+{
+    type Output = Density<T>;
 
-    fn div(self, other: Volume) -> Density {
+    fn div(self, other: Volume<T>) -> Density<T> {
         Density::from_base_units(self.as_base_units() / other.as_cubic_meters())
     }
 }
 
 // mass / density = volume
-impl ::std::ops::Div<Density> for Mass {
-    type Output = Volume;
+impl<T> ::std::ops::Div<Density<T>> for Mass<T>
+where
+    T: num_traits::Float,
+{
+    type Output = Volume<T>;
 
-    fn div(self, other: Density) -> Volume {
+    fn div(self, other: Density<T>) -> Volume<T> {
         Volume::from_cubic_meters(self.as_base_units() / other.as_base_units())
     }
 }
 
 // volume * density = mass
-impl ::std::ops::Mul<Density> for Volume {
-    type Output = Mass;
+impl<T> ::std::ops::Mul<Density<T>> for Volume<T>
+where
+    T: num_traits::Float,
+{
+    type Output = Mass<T>;
 
-    fn mul(self, other: Density) -> Mass {
+    fn mul(self, other: Density<T>) -> Mass<T> {
         Mass::from_base_units(self.as_cubic_meters() * other.as_base_units())
     }
 }
 
 // density * volume = mass
-impl ::std::ops::Mul<Volume> for Density {
-    type Output = Mass;
+impl<T> ::std::ops::Mul<Volume<T>> for Density<T>
+where
+    T: num_traits::Float,
+{
+    type Output = Mass<T>;
 
-    fn mul(self, other: Volume) -> Mass {
+    fn mul(self, other: Volume<T>) -> Mass<T> {
         Mass::from_base_units(self.as_base_units() * other.as_cubic_meters())
     }
 }
 
-impl Measurement for Density {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Density<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.kilograms_per_cubic_meter
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_kilograms_per_cubic_meter(units)
     }
 
@@ -123,7 +144,7 @@ impl Measurement for Density {
     }
 }
 
-implement_measurement! { Density }
+implement_measurement! { Density<T> }
 
 #[cfg(test)]
 mod test {

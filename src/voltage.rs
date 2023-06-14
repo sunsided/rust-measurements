@@ -17,58 +17,67 @@ use super::measurement::*;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Voltage {
-    volts: f64,
+pub struct Voltage<T>
+where
+    T: num_traits::Float,
+{
+    volts: T,
 }
 
-impl Voltage {
+impl<T> Voltage<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Voltage from a floating point value in Volts
-    pub fn from_volts(volts: f64) -> Self {
+    pub fn from_volts(volts: T) -> Self {
         Voltage { volts }
     }
 
     /// Create a new Voltage from a floating point value in Microvolts
-    pub fn from_microvolts(microvolts: f64) -> Self {
+    pub fn from_microvolts(microvolts: T) -> Self {
         Self::from_volts(microvolts / 1_000_000.0)
     }
 
     /// Create a new Voltage from a floating point value in Millivolts
-    pub fn from_millivolts(millivolts: f64) -> Self {
+    pub fn from_millivolts(millivolts: T) -> Self {
         Self::from_volts(millivolts / 1000.0)
     }
 
     /// Create a new Voltage from a floating point value in Kilovolts
-    pub fn from_kilovolts(kilovolts: f64) -> Self {
+    pub fn from_kilovolts(kilovolts: T) -> Self {
         Self::from_volts(kilovolts * 1000.0)
     }
 
     /// Convert this Voltage into a floating point value in Volts
-    pub fn as_volts(&self) -> f64 {
+    pub fn as_volts(&self) -> T {
         self.volts
     }
 
     /// Convert this Voltage into a floating point value in Microvolts
-    pub fn as_microvolts(&self) -> f64 {
+    pub fn as_microvolts(&self) -> T {
         self.volts * 1_000_000.0
     }
 
     /// Convert this Voltage into a floating point value in Millivolts
-    pub fn as_millivolts(&self) -> f64 {
+    pub fn as_millivolts(&self) -> T {
         self.volts * 1000.0
     }
 
     /// Convert this Voltage into a floating point value in Kilovolts
-    pub fn as_kilovolts(&self) -> f64 {
+    pub fn as_kilovolts(&self) -> T {
         self.volts / 1000.0
     }
 }
 
-impl Measurement for Voltage {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Voltage<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.volts
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_volts(units)
     }
 
@@ -76,7 +85,7 @@ impl Measurement for Voltage {
         "V"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         // Smallest to Largest
         let list = [
             ("fV", 1e-15),
@@ -96,7 +105,7 @@ impl Measurement for Voltage {
     }
 }
 
-implement_measurement! { Voltage }
+implement_measurement! { Voltage<T> }
 
 #[cfg(test)]
 mod test {

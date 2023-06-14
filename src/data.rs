@@ -31,119 +31,128 @@ const OCTET_TEBIOCTET_FACTOR: f64 = 1024.0 * 1024.0 * 1024.0 * 1024.0;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Data {
-    octets: f64,
+pub struct Data<T>
+where
+    T: num_traits::Float,
+{
+    octets: T,
 }
 
-impl Data {
+impl<T> Data<T>
+where
+    T: num_traits::Float,
+{
     /// Create new Data from floating point value in Octets
-    pub fn from_octets(octets: f64) -> Self {
+    pub fn from_octets(octets: T) -> Self {
         Data { octets }
     }
 
     /// Create new Data from floating point value in Bits
-    pub fn from_bits(bits: f64) -> Self {
+    pub fn from_bits(bits: T) -> Self {
         Self::from_octets(bits * OCTET_BIT_FACTOR)
     }
 
     // Inputs, legacy
     /// Create new Data from floating point value in Kilooctets (1000 octets)
-    pub fn from_kilooctets(kilooctets: f64) -> Self {
+    pub fn from_kilooctets(kilooctets: T) -> Self {
         Self::from_octets(kilooctets * OCTET_KILOOCTET_FACTOR)
     }
 
     /// Create new Data from floating point value in Megaoctets (1e6 octets)
-    pub fn from_megaoctets(megaoctets: f64) -> Self {
+    pub fn from_megaoctets(megaoctets: T) -> Self {
         Self::from_octets(megaoctets * OCTET_MEGAOCTET_FACTOR)
     }
 
     /// Create new Data from floating point value in Gigaoctets (1e9 octets)
-    pub fn from_gigaoctets(gigaoctets: f64) -> Self {
+    pub fn from_gigaoctets(gigaoctets: T) -> Self {
         Self::from_octets(gigaoctets * OCTET_GIGAOCTET_FACTOR)
     }
 
     /// Create new Data from floating point value in Teraoctets (1e12 octets)
-    pub fn from_teraoctets(teraoctets: f64) -> Self {
+    pub fn from_teraoctets(teraoctets: T) -> Self {
         Self::from_octets(teraoctets * OCTET_TERAOCTET_FACTOR)
     }
 
     /// Create new Data from floating point value in Kibioctets (1024 octets)
-    pub fn from_kibioctets(kibioctets: f64) -> Self {
+    pub fn from_kibioctets(kibioctets: T) -> Self {
         Self::from_octets(kibioctets * OCTET_KIBIOCTET_FACTOR)
     }
 
     /// Create new Data from floating point value in Mebioctets (1024**2 octets)
-    pub fn from_mebioctets(mebioctets: f64) -> Self {
+    pub fn from_mebioctets(mebioctets: T) -> Self {
         Self::from_octets(mebioctets * OCTET_MEBIOCTET_FACTOR)
     }
 
     /// Create new Data from floating point value in Gibioctets (1024**3 octets)
-    pub fn from_gibioctets(gibioctets: f64) -> Self {
+    pub fn from_gibioctets(gibioctets: T) -> Self {
         Self::from_octets(gibioctets * OCTET_GIBIOCTET_FACTOR)
     }
 
     /// Create new Data from floating point value in Tebioctets (1024**4 octets)
-    pub fn from_tebioctets(tebioctets: f64) -> Self {
+    pub fn from_tebioctets(tebioctets: T) -> Self {
         Self::from_octets(tebioctets * OCTET_TEBIOCTET_FACTOR)
     }
 
     /// Convert this Data to a floating point value in Octets
-    pub fn as_octets(&self) -> f64 {
+    pub fn as_octets(&self) -> T {
         self.octets
     }
 
     /// Convert this Data to a floating point value in Bits
-    pub fn as_bits(&self) -> f64 {
+    pub fn as_bits(&self) -> T {
         self.octets / OCTET_BIT_FACTOR
     }
 
     /// Convert this Data to a floating point value in Kilooctets (1000 octets)
-    pub fn as_kilooctets(&self) -> f64 {
+    pub fn as_kilooctets(&self) -> T {
         self.octets / OCTET_KILOOCTET_FACTOR
     }
 
     /// Convert this Data to a floating point value in Megaoctets (1e6 octets)
-    pub fn as_megaoctets(&self) -> f64 {
+    pub fn as_megaoctets(&self) -> T {
         self.octets / OCTET_MEGAOCTET_FACTOR
     }
 
     /// Convert this Data to a floating point value in Gigaoctets (1e9 octets)
-    pub fn as_gigaoctets(&self) -> f64 {
+    pub fn as_gigaoctets(&self) -> T {
         self.octets / OCTET_GIGAOCTET_FACTOR
     }
 
     /// Convert this Data to a floating point value in Teraoctets (1e12 octets)
-    pub fn as_teraoctets(&self) -> f64 {
+    pub fn as_teraoctets(&self) -> T {
         self.octets / OCTET_TERAOCTET_FACTOR
     }
 
     /// Convert this Data to a floating point value in Kibioctets (1024 octets)
-    pub fn as_kibioctets(&self) -> f64 {
+    pub fn as_kibioctets(&self) -> T {
         self.octets / OCTET_KIBIOCTET_FACTOR
     }
 
     /// Convert this Data to a floating point value in Mebioctets (1024**2 octets)
-    pub fn as_mebioctets(&self) -> f64 {
+    pub fn as_mebioctets(&self) -> T {
         self.octets / OCTET_MEBIOCTET_FACTOR
     }
 
     /// Convert this Data to a floating point value in Gibioctets (1024**3 octets)
-    pub fn as_gibioctets(&self) -> f64 {
+    pub fn as_gibioctets(&self) -> T {
         self.octets / OCTET_GIBIOCTET_FACTOR
     }
 
     /// Convert this Data to a floating point value in Tebioctets (1024**4 octets)
-    pub fn as_tebioctets(&self) -> f64 {
+    pub fn as_tebioctets(&self) -> T {
         self.octets / OCTET_TEBIOCTET_FACTOR
     }
 }
 
-impl Measurement for Data {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Data<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.octets
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_octets(units)
     }
 
@@ -151,7 +160,7 @@ impl Measurement for Data {
         "octets"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         // Smallest to largest
         let list = [
             ("octets", 1.0),
@@ -166,7 +175,7 @@ impl Measurement for Data {
     }
 }
 
-implement_measurement! { Data }
+implement_measurement! { Data<T> }
 
 #[cfg(test)]
 mod test {
