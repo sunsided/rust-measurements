@@ -21,80 +21,89 @@ use std::str::FromStr;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Angle {
-    radians: f64,
+pub struct Angle<T>
+where
+    T: num_traits::Float,
+{
+    radians: T,
 }
 
-impl Angle {
+impl<T> Angle<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Angle from a floating point value in degrees
-    pub fn from_degrees(degrees: f64) -> Self {
+    pub fn from_degrees(degrees: T) -> Self {
         Angle::from_radians(degrees * ::PI / 180.0)
     }
 
     /// Create a new Angle from a floating point value in radians
-    pub fn from_radians(radians: f64) -> Self {
+    pub fn from_radians(radians: T) -> Self {
         Angle { radians }
     }
 
     /// Convert this Angle to a floating point value in degrees
-    pub fn as_degrees(&self) -> f64 {
+    pub fn as_degrees(&self) -> T {
         self.radians * 180.0 / ::PI
     }
 
     /// Convert this Angle to a floating point value in radians
-    pub fn as_radians(&self) -> f64 {
+    pub fn as_radians(&self) -> T {
         self.radians
     }
 
     /// Calculate the cosine of this angle
     #[cfg(feature = "std")]
-    pub fn cos(&self) -> f64 {
+    pub fn cos(&self) -> T {
         self.radians.cos()
     }
 
     /// Calculate the sine of this angle
     #[cfg(feature = "std")]
-    pub fn sin(&self) -> f64 {
+    pub fn sin(&self) -> T {
         self.radians.sin()
     }
 
     /// Calculate the sine and cosine of this angle
     #[cfg(feature = "std")]
-    pub fn sin_cos(&self) -> (f64, f64) {
+    pub fn sin_cos(&self) -> (T, T) {
         self.radians.sin_cos()
     }
 
     /// Calculate the tangent of this angle
     #[cfg(feature = "std")]
-    pub fn tan(&self) -> f64 {
+    pub fn tan(&self) -> T {
         self.radians.tan()
     }
 
     /// Calculate the arcsine of a number
     #[cfg(feature = "std")]
-    pub fn asin(num: f64) -> Self {
+    pub fn asin(num: T) -> Self {
         Angle::from_radians(num.asin())
     }
 
     /// Calculate the arccosine of a number
     #[cfg(feature = "std")]
-    pub fn acos(num: f64) -> Self {
+    pub fn acos(num: T) -> Self {
         Angle::from_radians(num.acos())
     }
 
     /// Calculate the arctangent of a number
     #[cfg(feature = "std")]
-    pub fn atan(num: f64) -> Self {
+    pub fn atan(num: T) -> Self {
         Angle::from_radians(num.atan())
     }
 }
 
-impl Measurement for Angle {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Angle<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.radians
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_radians(units)
     }
 
@@ -104,7 +113,10 @@ impl Measurement for Angle {
 }
 
 #[cfg(feature = "from_str")]
-impl FromStr for Angle {
+impl FromStr for Angle
+where
+    T: num_traits::Float,
+{
     type Err = std::num::ParseFloatError;
 
     /// Create a new Angle from a string
@@ -119,18 +131,18 @@ impl FromStr for Angle {
             let float_val = caps.get(1).unwrap().as_str();
             return Ok(
                 match caps.get(2).unwrap().as_str().to_lowercase().as_str() {
-                    "deg" | "\u{00B0}" => Angle::from_degrees(float_val.parse::<f64>()?),
-                    "rad" => Angle::from_radians(float_val.parse::<f64>()?),
-                    _ => Angle::from_degrees(val.parse::<f64>()?),
+                    "deg" | "\u{00B0}" => Angle::from_degrees(float_val.parse::<T>()?),
+                    "rad" => Angle::from_radians(float_val.parse::<T>()?),
+                    _ => Angle::from_degrees(val.parse::<T>()?),
                 },
             );
         }
 
-        Ok(Angle::from_degrees(val.parse::<f64>()?))
+        Ok(Angle::from_degrees(val.parse::<T>()?))
     }
 }
 
-implement_measurement! { Angle }
+implement_measurement! { Angle<T> }
 
 #[cfg(test)]
 mod test {

@@ -24,70 +24,79 @@ pub const SECONDS_HOURS_FACTOR: f64 = 60.0 * 60.0;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Speed {
-    meters_per_second: f64,
+pub struct Speed<T>
+where
+    T: num_traits::Float,
+{
+    meters_per_second: T,
 }
 
-impl Speed {
+impl<T> Speed<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Speed from a floating point number of m/s
-    pub fn from_meters_per_second(meters_per_second: f64) -> Speed {
-        Speed { meters_per_second }
+    pub fn from_meters_per_second(meters_per_second: T) -> Self {
+        Self { meters_per_second }
     }
 
     /// Create a new Speed from a floating point number of m/s
-    pub fn from_metres_per_second(metres_per_second: f64) -> Speed {
-        Speed::from_meters_per_second(metres_per_second)
+    pub fn from_metres_per_second(metres_per_second: T) -> Self {
+        Self::from_meters_per_second(metres_per_second)
     }
 
     /// Create a new Speed from a floating point number of km/h (kph)
-    pub fn from_kilometers_per_hour(kilometers_per_hour: f64) -> Speed {
-        Speed::from_meters_per_second(
+    pub fn from_kilometers_per_hour(kilometers_per_hour: T) -> Self {
+        Self::from_meters_per_second(
             (kilometers_per_hour / length::METER_KILOMETER_FACTOR) / SECONDS_HOURS_FACTOR,
         )
     }
 
     /// Create a new Speed from a floating point number of km/h (kph)
-    pub fn from_kilometres_per_hour(kilometres_per_hour: f64) -> Speed {
-        Speed::from_kilometers_per_hour(kilometres_per_hour)
+    pub fn from_kilometres_per_hour(kilometres_per_hour: T) -> Self {
+        Self::from_kilometers_per_hour(kilometres_per_hour)
     }
 
     /// Create a new Speed from a floating point number of miles/hour (mph)
-    pub fn from_miles_per_hour(miles_per_hour: f64) -> Speed {
-        Speed::from_meters_per_second((miles_per_hour * 1609.0) / 3600.0)
+    pub fn from_miles_per_hour(miles_per_hour: T) -> Self {
+        Self::from_meters_per_second((miles_per_hour * 1609.0) / 3600.0)
     }
 
     /// Convert this speed to a floating point number of m/s
-    pub fn as_meters_per_second(&self) -> f64 {
+    pub fn as_meters_per_second(&self) -> T {
         self.meters_per_second
     }
 
     /// Convert this speed to a floating point number of m/s
-    pub fn as_metres_per_second(&self) -> f64 {
+    pub fn as_metres_per_second(&self) -> T {
         self.as_meters_per_second()
     }
 
     /// Convert this speed to a floating point number of km/hour (kph)
-    pub fn as_kilometers_per_hour(&self) -> f64 {
+    pub fn as_kilometers_per_hour(&self) -> T {
         (self.meters_per_second / 1000.0) * 3600.0
     }
 
     /// Convert this speed to a floating point number of km/hour (kph)
-    pub fn as_kilometres_per_hour(&self) -> f64 {
+    pub fn as_kilometres_per_hour(&self) -> T {
         self.as_kilometers_per_hour()
     }
 
     /// Convert this speed to a floating point number of miles/hour (mph)
-    pub fn as_miles_per_hour(&self) -> f64 {
+    pub fn as_miles_per_hour(&self) -> T {
         (self.meters_per_second / 1609.0) * 3600.0
     }
 }
 
-impl Measurement for Speed {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Speed<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.meters_per_second
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_meters_per_second(units)
     }
 
@@ -95,7 +104,7 @@ impl Measurement for Speed {
         "m/s"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         // Smallest to largest
         let list = [
             ("nm/s", 1e-9),
@@ -110,7 +119,7 @@ impl Measurement for Speed {
     }
 }
 
-implement_measurement! { Speed }
+implement_measurement! { Speed<T> }
 
 #[cfg(test)]
 mod test {

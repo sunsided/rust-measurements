@@ -29,98 +29,107 @@ pub const WATT_PS_FACTOR: f64 = 1.0 / 735.499;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Power {
-    watts: f64,
+pub struct Power<T>
+where
+    T: num_traits::Float,
+{
+    watts: T,
 }
 
-impl Power {
+impl<T> Power<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Power from a floating point value in Watts
-    pub fn from_watts(watts: f64) -> Power {
+    pub fn from_watts(watts: T) -> Self {
         Power { watts }
     }
 
     /// Create a new Power from a floating point value in milliwatts
-    pub fn from_milliwatts(milliwatts: f64) -> Power {
+    pub fn from_milliwatts(milliwatts: T) -> Self {
         Self::from_watts(milliwatts / WATT_MILLIWATT_FACTOR)
     }
 
     /// Create a new Power from a floating point value in microwatts
-    pub fn from_microwatts(microwatts: f64) -> Power {
+    pub fn from_microwatts(microwatts: T) -> Self {
         Self::from_watts(microwatts / WATT_MICROWATT_FACTOR)
     }
 
     /// Create a new Power from a floating point value in horsepower (hp)
-    pub fn from_horsepower(horsepower: f64) -> Power {
+    pub fn from_horsepower(horsepower: T) -> Self {
         Self::from_watts(horsepower / WATT_HORSEPOWER_FACTOR)
     }
 
     /// Create a new Power from a floating point value in metric horsepower (PS)
-    pub fn from_ps(ps: f64) -> Power {
+    pub fn from_ps(ps: T) -> Self {
         Self::from_watts(ps / WATT_PS_FACTOR)
     }
 
     /// Create a new Power from a floating point value in metric horsepower (PS)
-    pub fn from_metric_horsepower(metric_horsepower: f64) -> Power {
+    pub fn from_metric_horsepower(metric_horsepower: T) -> Self {
         Self::from_watts(metric_horsepower / WATT_PS_FACTOR)
     }
 
     /// Create a new Power from a floating point value in BTU/mjn
-    pub fn from_btu_per_minute(btu_per_minute: f64) -> Power {
+    pub fn from_btu_per_minute(btu_per_minute: T) -> Self {
         Self::from_watts(btu_per_minute / WATT_BTU_MIN_FACTOR)
     }
 
     /// Create a new Power from a floating point value in Kilowatts (kW)
-    pub fn from_kilowatts(kw: f64) -> Power {
+    pub fn from_kilowatts(kw: T) -> Self {
         Self::from_watts(kw / WATT_KILOWATT_FACTOR)
     }
 
     /// Convert this Power into a floating point value in Watts
-    pub fn as_watts(&self) -> f64 {
+    pub fn as_watts(&self) -> T {
         self.watts
     }
 
     /// Convert this Power into a floating point value in horsepower (hp)
-    pub fn as_horsepower(&self) -> f64 {
+    pub fn as_horsepower(&self) -> T {
         self.watts * WATT_HORSEPOWER_FACTOR
     }
 
     /// Convert this Power into a floating point value in metric horsepower (PS)
-    pub fn as_ps(&self) -> f64 {
+    pub fn as_ps(&self) -> T {
         self.watts * WATT_PS_FACTOR
     }
 
     /// Convert this Power into a floating point value in metric horsepower (PS)
-    pub fn as_metric_horsepower(&self) -> f64 {
+    pub fn as_metric_horsepower(&self) -> T {
         self.watts * WATT_PS_FACTOR
     }
 
     /// Convert this Power into a floating point value in BTU/min
-    pub fn as_btu_per_minute(&self) -> f64 {
+    pub fn as_btu_per_minute(&self) -> T {
         self.watts * WATT_BTU_MIN_FACTOR
     }
 
     /// Convert this Power into a floating point value in kilowatts (kW)
-    pub fn as_kilowatts(&self) -> f64 {
+    pub fn as_kilowatts(&self) -> T {
         self.watts * WATT_KILOWATT_FACTOR
     }
 
     /// Convert this Power into a floating point value in milliwatts (mW)
-    pub fn as_milliwatts(&self) -> f64 {
+    pub fn as_milliwatts(&self) -> T {
         self.watts * WATT_MILLIWATT_FACTOR
     }
 
     /// Convert this Power into a floating point value in microwatts (µW)
-    pub fn as_microwatts(&self) -> f64 {
+    pub fn as_microwatts(&self) -> T {
         self.watts * WATT_MICROWATT_FACTOR
     }
 }
 
-impl Measurement for Power {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Power<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.watts
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_watts(units)
     }
 
@@ -128,7 +137,7 @@ impl Measurement for Power {
         "W"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         // Smallest to Largest
         let list = [
             ("fW", 1e-15),
@@ -148,7 +157,7 @@ impl Measurement for Power {
     }
 }
 
-implement_measurement! { Power }
+implement_measurement! { Power<T> }
 
 #[cfg(test)]
 mod test {

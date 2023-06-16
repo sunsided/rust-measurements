@@ -8,6 +8,10 @@
 
 #![deny(warnings, missing_docs)]
 #![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(
+    all(feature = "std", feature = "num-traits"),
+    feature("num-traits/std")
+)]
 
 #[cfg(not(feature = "std"))]
 use core as std;
@@ -107,7 +111,10 @@ pub mod test_utils;
 ///     - C = A / B
 macro_rules! impl_maths {
     ($a:ty, $b:ty) => {
-        impl std::ops::Mul<$b> for $b {
+        impl<T> std::ops::Mul<$b> for $b
+        where
+            T: num_traits::Float,
+        {
             type Output = $a;
 
             fn mul(self, rhs: $b) -> Self::Output {
@@ -115,7 +122,10 @@ macro_rules! impl_maths {
             }
         }
 
-        impl std::ops::Div<$b> for $a {
+        impl<T> std::ops::Div<$b> for $a
+        where
+            T: num_traits::Float,
+        {
             type Output = $b;
 
             fn div(self, rhs: $b) -> Self::Output {
@@ -125,7 +135,10 @@ macro_rules! impl_maths {
     };
 
     ($a:ty, $b:ty, $c:ty) => {
-        impl std::ops::Mul<$b> for $c {
+        impl<T> std::ops::Mul<$b> for $c
+        where
+            T: num_traits::Float,
+        {
             type Output = $a;
 
             fn mul(self, rhs: $b) -> Self::Output {
@@ -133,7 +146,10 @@ macro_rules! impl_maths {
             }
         }
 
-        impl std::ops::Mul<$c> for $b {
+        impl<T> std::ops::Mul<$c> for $b
+        where
+            T: num_traits::Float,
+        {
             type Output = $a;
 
             fn mul(self, rhs: $c) -> Self::Output {
@@ -141,7 +157,10 @@ macro_rules! impl_maths {
             }
         }
 
-        impl std::ops::Div<$c> for $a {
+        impl<T> std::ops::Div<$c> for $a
+        where
+            T: num_traits::Float,
+        {
             type Output = $b;
 
             fn div(self, rhs: $c) -> Self::Output {
@@ -149,7 +168,10 @@ macro_rules! impl_maths {
             }
         }
 
-        impl std::ops::Div<$b> for $a {
+        impl<T> std::ops::Div<$b> for $a
+        where
+            T: num_traits::Float,
+        {
             type Output = $c;
 
             fn div(self, rhs: $b) -> Self::Output {
@@ -159,12 +181,15 @@ macro_rules! impl_maths {
     };
 }
 
-impl Measurement for time::Duration {
-    fn as_base_units(&self) -> f64 {
-        self.as_secs() as f64 + (f64::from(self.subsec_nanos()) * 1e-9)
+impl<T> Measurement<T> for time::Duration
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
+        self.as_secs() as T + (T::from(self.subsec_nanos()) * 1e-9)
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         let subsec_nanos = ((units * 1e9) % 1e9) as u32;
         let secs = units as u64;
         time::Duration::new(secs, subsec_nanos)
@@ -175,54 +200,54 @@ impl Measurement for time::Duration {
     }
 }
 
-impl_maths!(Area, Length);
-impl_maths!(Energy, time::Duration, Power);
-impl_maths!(Force, Mass, Acceleration);
-impl_maths!(Force, Pressure, Area);
-impl_maths!(Length, time::Duration, Speed);
-impl_maths!(Power, Force, Speed);
-impl_maths!(Speed, time::Duration, Acceleration);
-impl_maths!(Volume, Length, Area);
-impl_maths!(Power, AngularVelocity, Torque);
-impl_maths!(Power, Voltage, Current);
-impl_maths!(Voltage, Resistance, Current);
+impl_maths!(Area<T>, Length<T>);
+impl_maths!(Energy<T>, time::Duration, Power<T>);
+impl_maths!(Force<T>, Mass<T>, Acceleration<T>);
+impl_maths!(Force<T>, Pressure<T>, Area<T>);
+impl_maths!(Length<T>, time::Duration, Speed<T>);
+impl_maths!(Power<T>, Force<T>, Speed<T>);
+impl_maths!(Speed<T>, time::Duration, Acceleration<T>);
+impl_maths!(Volume<T>, Length<T>, Area<T>);
+impl_maths!(Power<T>, AngularVelocity<T>, Torque<T>);
+impl_maths!(Power<T>, Voltage<T>, Current<T>);
+impl_maths!(Voltage<T>, Resistance<T>, Current<T>);
 
 // Force * Distance is ambiguous. Create an ambiguous struct the user can then
 // cast into either Torque or Energy.
 
-impl_maths!(TorqueEnergy, Force, Length);
+impl_maths!(TorqueEnergy<T>, Force<T>, Length<T>);
 
 // Implement the divisions manually (the above macro only implemented the
 // TorqueEnergy / X operations).
 
-impl std::ops::Div<Length> for Torque {
-    type Output = Force;
+impl<T> std::ops::Div<Length<T>> for Torque<T> {
+    type Output = Force<T>;
 
-    fn div(self, rhs: Length) -> Self::Output {
+    fn div(self, rhs: Length<T>) -> Self::Output {
         Self::Output::from_base_units(self.as_base_units() / rhs.as_base_units())
     }
 }
 
-impl std::ops::Div<Force> for Torque {
-    type Output = Length;
+impl<T> std::ops::Div<Force<T>> for Torque<T> {
+    type Output = Length<T>;
 
-    fn div(self, rhs: Force) -> Self::Output {
+    fn div(self, rhs: Force<T>) -> Self::Output {
         Self::Output::from_base_units(self.as_base_units() / rhs.as_base_units())
     }
 }
 
-impl std::ops::Div<Length> for Energy {
-    type Output = Force;
+impl<T> std::ops::Div<Length<T>> for Energy<T> {
+    type Output = Force<T>;
 
-    fn div(self, rhs: Length) -> Self::Output {
+    fn div(self, rhs: Length<T>) -> Self::Output {
         Self::Output::from_base_units(self.as_base_units() / rhs.as_base_units())
     }
 }
 
-impl std::ops::Div<Force> for Energy {
-    type Output = Length;
+impl<T> std::ops::Div<Force<T>> for Energy<T> {
+    type Output = Length<T>;
 
-    fn div(self, rhs: Force) -> Self::Output {
+    fn div(self, rhs: Force<T>) -> Self::Output {
         Self::Output::from_base_units(self.as_base_units() / rhs.as_base_units())
     }
 }

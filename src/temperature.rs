@@ -20,8 +20,11 @@ use std::str::FromStr;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Temperature {
-    degrees_kelvin: f64,
+pub struct Temperature<T>
+where
+    T: num_traits::Float,
+{
+    degrees_kelvin: T,
 }
 
 /// The `TemperatureDelta` struct can be used to deal with differences between
@@ -39,104 +42,116 @@ pub struct Temperature {
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug)]
-pub struct TemperatureDelta {
-    kelvin_degrees: f64,
+pub struct TemperatureDelta<T>
+where
+    T: num_traits::Float,
+{
+    kelvin_degrees: T,
 }
 
-impl TemperatureDelta {
+impl<T> TemperatureDelta<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new TemperatureDelta from a floating point value in Kelvin
-    pub fn from_kelvin(kelvin_degrees: f64) -> Self {
+    pub fn from_kelvin(kelvin_degrees: T) -> Self {
         TemperatureDelta { kelvin_degrees }
     }
 
     /// Create a new TemperatureDelta from a floating point value in Celsius
-    pub fn from_celsius(celsius_degrees: f64) -> Self {
+    pub fn from_celsius(celsius_degrees: T) -> Self {
         TemperatureDelta::from_kelvin(celsius_degrees)
     }
 
     /// Create a new TemperatureDelta from a floating point value in Fahrenheit
-    pub fn from_fahrenheit(farenheit_degrees: f64) -> Self {
+    pub fn from_fahrenheit(farenheit_degrees: T) -> Self {
         TemperatureDelta {
             kelvin_degrees: farenheit_degrees / 1.8,
         }
     }
 
     /// Create a new TemperatureDelta from a floating point value in Rankine
-    pub fn from_rankine(rankine_degrees: f64) -> Self {
+    pub fn from_rankine(rankine_degrees: T) -> Self {
         TemperatureDelta {
             kelvin_degrees: rankine_degrees / 1.8,
         }
     }
 
     /// Convert this TemperatureDelta to a floating point value in Kelvin
-    pub fn as_kelvin(&self) -> f64 {
+    pub fn as_kelvin(&self) -> T {
         self.kelvin_degrees
     }
 
     /// Convert this TemperatureDelta to a floating point value in Celsius
-    pub fn as_celsius(&self) -> f64 {
+    pub fn as_celsius(&self) -> T {
         self.kelvin_degrees
     }
 
     /// Convert this TemperatureDelta to a floating point value in Fahrenheit
-    pub fn as_fahrenheit(&self) -> f64 {
+    pub fn as_fahrenheit(&self) -> T {
         self.kelvin_degrees * 1.8
     }
 
     /// Convert this TemperatureDelta to a floating point value in Rankine
-    pub fn as_rankine(&self) -> f64 {
+    pub fn as_rankine(&self) -> T {
         self.kelvin_degrees * 1.8
     }
 }
 
-impl Temperature {
+impl<T> Temperature<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Temperature from a floating point value in Kelvin
-    pub fn from_kelvin(degrees_kelvin: f64) -> Self {
+    pub fn from_kelvin(degrees_kelvin: T) -> Self {
         Temperature { degrees_kelvin }
     }
 
     /// Create a new Temperature from a floating point value in Celsius
-    pub fn from_celsius(degrees_celsius: f64) -> Self {
+    pub fn from_celsius(degrees_celsius: T) -> Self {
         Self::from_kelvin(degrees_celsius + 273.15)
     }
 
     /// Create a new Temperature from a floating point value in Fahrenheit
-    pub fn from_fahrenheit(degrees_fahrenheit: f64) -> Self {
+    pub fn from_fahrenheit(degrees_fahrenheit: T) -> Self {
         Self::from_kelvin((degrees_fahrenheit - 32.0) / 1.8 + 273.15)
     }
 
     /// Create a new Temperature from a floating point value in Rankine
-    pub fn from_rankine(degrees_rankine: f64) -> Self {
+    pub fn from_rankine(degrees_rankine: T) -> Self {
         Self::from_kelvin((degrees_rankine - 491.67) / 1.8 + 273.15)
     }
 
     /// Convert this absolute Temperature to a floating point value in Kelvin
-    pub fn as_kelvin(&self) -> f64 {
+    pub fn as_kelvin(&self) -> T {
         self.degrees_kelvin
     }
 
     /// Convert this absolute Temperature to a floating point value in Celsius
-    pub fn as_celsius(&self) -> f64 {
+    pub fn as_celsius(&self) -> T {
         self.degrees_kelvin - 273.15
     }
 
     /// Convert this absolute Temperature to a floating point value in Fahrenheit
-    pub fn as_fahrenheit(&self) -> f64 {
+    pub fn as_fahrenheit(&self) -> T {
         (self.degrees_kelvin - 273.15) * 1.8 + 32.0
     }
 
     /// Convert this absolute Temperature to a floating point value in Rankine
-    pub fn as_rankine(&self) -> f64 {
+    pub fn as_rankine(&self) -> T {
         (self.degrees_kelvin - 273.15) * 1.8 + 491.67
     }
 }
 
-impl Measurement for Temperature {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Temperature<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.degrees_kelvin
     }
 
-    fn from_base_units(degrees_kelvin: f64) -> Self {
+    fn from_base_units(degrees_kelvin: T) -> Self {
         Self::from_kelvin(degrees_kelvin)
     }
 
@@ -145,12 +160,15 @@ impl Measurement for Temperature {
     }
 }
 
-impl Measurement for TemperatureDelta {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for TemperatureDelta<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.kelvin_degrees
     }
 
-    fn from_base_units(kelvin_degrees: f64) -> Self {
+    fn from_base_units(kelvin_degrees: T) -> Self {
         Self::from_kelvin(kelvin_degrees)
     }
 
@@ -159,53 +177,74 @@ impl Measurement for TemperatureDelta {
     }
 }
 
-impl ::std::ops::Add<TemperatureDelta> for Temperature {
-    type Output = Temperature;
+impl<T> ::std::ops::Add<TemperatureDelta<T>> for Temperature<T>
+where
+    T: num_traits::Float,
+{
+    type Output = Temperature<T>;
 
-    fn add(self, other: TemperatureDelta) -> Temperature {
+    fn add(self, other: TemperatureDelta<T>) -> Temperature<T> {
         Temperature::from_kelvin(self.degrees_kelvin + other.kelvin_degrees)
     }
 }
 
-impl ::std::ops::Add<Temperature> for TemperatureDelta {
-    type Output = Temperature;
+impl<T> ::std::ops::Add<Temperature<T>> for TemperatureDelta<T>
+where
+    T: num_traits::Float,
+{
+    type Output = Temperature<T>;
 
-    fn add(self, other: Temperature) -> Temperature {
+    fn add(self, other: Temperature<T>) -> Temperature<T> {
         other + self
     }
 }
 
-impl ::std::ops::Sub<TemperatureDelta> for Temperature {
-    type Output = Temperature;
+impl<T> ::std::ops::Sub<TemperatureDelta<T>> for Temperature<T>
+where
+    T: num_traits::Float,
+{
+    type Output = Temperature<T>;
 
-    fn sub(self, other: TemperatureDelta) -> Temperature {
+    fn sub(self, other: TemperatureDelta<T>) -> Temperature<T> {
         Temperature::from_kelvin(self.degrees_kelvin - other.kelvin_degrees)
     }
 }
 
-impl ::std::ops::Sub<Temperature> for Temperature {
-    type Output = TemperatureDelta;
+impl<T> ::std::ops::Sub<Temperature<T>> for Temperature<T>
+where
+    T: num_traits::Float,
+{
+    type Output = TemperatureDelta<T>;
 
-    fn sub(self, other: Temperature) -> TemperatureDelta {
+    fn sub(self, other: Temperature<T>) -> TemperatureDelta<T> {
         TemperatureDelta::from_kelvin(self.degrees_kelvin - other.degrees_kelvin)
     }
 }
 
-impl ::std::cmp::Eq for Temperature {}
-impl ::std::cmp::PartialEq for Temperature {
+impl<T> ::std::cmp::Eq for Temperature<T> where T: num_traits::Float {}
+impl<T> ::std::cmp::PartialEq for Temperature<T>
+where
+    T: num_traits::Float,
+{
     fn eq(&self, other: &Self) -> bool {
         self.as_base_units() == other.as_base_units()
     }
 }
 
-impl ::std::cmp::PartialOrd for Temperature {
+impl<T> ::std::cmp::PartialOrd for Temperature<T>
+where
+    T: num_traits::Float,
+{
     fn partial_cmp(&self, other: &Self) -> Option<::std::cmp::Ordering> {
         self.as_base_units().partial_cmp(&other.as_base_units())
     }
 }
 
 #[cfg(feature = "from_str")]
-impl FromStr for Temperature {
+impl<T> FromStr for Temperature<T>
+where
+    T: num_traits::Float,
+{
     type Err = std::num::ParseFloatError;
 
     /// Create a new Temperature from a string
@@ -220,21 +259,21 @@ impl FromStr for Temperature {
             let float_val = caps.get(1).unwrap().as_str();
             return Ok(
                 match caps.get(3).unwrap().as_str().to_uppercase().as_str() {
-                    "F" => Temperature::from_fahrenheit(float_val.parse::<f64>()?),
-                    "C" => Temperature::from_celsius(float_val.parse::<f64>()?),
-                    "K" => Temperature::from_kelvin(float_val.parse::<f64>()?),
-                    "R" => Temperature::from_rankine(float_val.parse::<f64>()?),
-                    _ => Temperature::from_celsius(val.parse::<f64>()?),
+                    "F" => Temperature::from_fahrenheit(float_val.parse::<T>()?),
+                    "C" => Temperature::from_celsius(float_val.parse::<T>()?),
+                    "K" => Temperature::from_kelvin(float_val.parse::<T>()?),
+                    "R" => Temperature::from_rankine(float_val.parse::<T>()?),
+                    _ => Temperature::from_celsius(val.parse::<T>()?),
                 },
             );
         }
 
-        Ok(Temperature::from_celsius(val.parse::<f64>()?))
+        Ok(Temperature::from_celsius(val.parse::<T>()?))
     }
 }
 
-implement_display!(Temperature);
-implement_measurement!(TemperatureDelta);
+implement_display!(Temperature<T>);
+implement_measurement!(TemperatureDelta<T>);
 
 #[cfg(test)]
 mod test {

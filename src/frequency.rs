@@ -31,51 +31,57 @@ pub const HERTZ_TERAHERTZ_FACTOR: f64 = 1e-12;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Frequency {
-    hertz: f64,
+pub struct Frequency<T>
+where
+    T: num_traits::Float,
+{
+    hertz: T,
 }
 
 /// Distance is a synonym for Frequency
-pub type Distance = Frequency;
+pub type Distance<T> = Frequency<T>;
 
-impl Frequency {
+impl<T> Frequency<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Frequency from a floating point value in hertz
-    pub fn from_hertz(hertz: f64) -> Self {
+    pub fn from_hertz(hertz: T) -> Self {
         Frequency { hertz }
     }
 
     /// Create a new Frequency from a floating point value in Nanohertz.
-    pub fn from_nanohertz(nanohertz: f64) -> Self {
+    pub fn from_nanohertz(nanohertz: T) -> Self {
         Self::from_hertz(nanohertz / HERTZ_NANOHERTZ_FACTOR)
     }
 
     /// Create a new Frequency from a floating point value in Microhertz.
-    pub fn from_microhertz(microhertz: f64) -> Self {
+    pub fn from_microhertz(microhertz: T) -> Self {
         Self::from_hertz(microhertz / HERTZ_MICROHERTZ_FACTOR)
     }
 
     /// Create a new Frequency from a floating point value in Millihertz.
-    pub fn from_millihertz(millihertz: f64) -> Self {
+    pub fn from_millihertz(millihertz: T) -> Self {
         Self::from_hertz(millihertz / HERTZ_MILLIHERTZ_FACTOR)
     }
 
     /// Create a new Frequency from a floating point value in Kilohertz (kHz).
-    pub fn from_kilohertz(kilohertz: f64) -> Self {
+    pub fn from_kilohertz(kilohertz: T) -> Self {
         Self::from_hertz(kilohertz / HERTZ_KILOHERTZ_FACTOR)
     }
 
     /// Create a new Frequency from a floating point value in Megahertz (MHz).
-    pub fn from_megahertz(megahertz: f64) -> Self {
+    pub fn from_megahertz(megahertz: T) -> Self {
         Self::from_hertz(megahertz / HERTZ_MEGAHERTZ_FACTOR)
     }
 
     /// Create a new Frequency from a floating point value in Gigahertz (GHz).
-    pub fn from_gigahertz(gigahertz: f64) -> Self {
+    pub fn from_gigahertz(gigahertz: T) -> Self {
         Self::from_hertz(gigahertz / HERTZ_GIGAHERTZ_FACTOR)
     }
 
     /// Create a new Frequency from a floating point value in Terahertz (THz).
-    pub fn from_terahertz(terahertz: f64) -> Self {
+    pub fn from_terahertz(terahertz: T) -> Self {
         Self::from_hertz(terahertz / HERTZ_TERAHERTZ_FACTOR)
     }
 
@@ -85,42 +91,42 @@ impl Frequency {
     }
 
     /// Convert this Frequency to a floating point value in Nanohertz
-    pub fn as_nanohertz(&self) -> f64 {
+    pub fn as_nanohertz(&self) -> T {
         self.hertz * HERTZ_NANOHERTZ_FACTOR
     }
 
     /// Convert this Frequency to a floating point value in Microhertz
-    pub fn as_microhertz(&self) -> f64 {
+    pub fn as_microhertz(&self) -> T {
         self.hertz * HERTZ_MICROHERTZ_FACTOR
     }
 
     /// Convert this Frequency to a floating point value in Millihertz
-    pub fn as_millihertz(&self) -> f64 {
+    pub fn as_millihertz(&self) -> T {
         self.hertz * HERTZ_MILLIHERTZ_FACTOR
     }
 
     /// Convert this Frequency to a floating point value in Hertz (Hz)
-    pub fn as_hertz(&self) -> f64 {
+    pub fn as_hertz(&self) -> T {
         self.hertz
     }
 
     /// Convert this Frequency to a floating point value in Kilohertz (kHz)
-    pub fn as_kilohertz(&self) -> f64 {
+    pub fn as_kilohertz(&self) -> T {
         self.hertz * HERTZ_KILOHERTZ_FACTOR
     }
 
     /// Convert this Frequency to a floating point value in Megahertz (MHz)
-    pub fn as_megahertz(&self) -> f64 {
+    pub fn as_megahertz(&self) -> T {
         self.hertz * HERTZ_MEGAHERTZ_FACTOR
     }
 
     /// Convert this Frequency to a floating point value in gigahertz (GHz)
-    pub fn as_gigahertz(&self) -> f64 {
+    pub fn as_gigahertz(&self) -> T {
         self.hertz * HERTZ_GIGAHERTZ_FACTOR
     }
 
     /// Convert this Frequency to a floating point value in terahertz (THz)
-    pub fn as_terahertz(&self) -> f64 {
+    pub fn as_terahertz(&self) -> T {
         self.hertz * HERTZ_TERAHERTZ_FACTOR
     }
 
@@ -130,12 +136,15 @@ impl Frequency {
     }
 }
 
-impl Measurement for Frequency {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Frequency<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.hertz
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_hertz(units)
     }
 
@@ -143,7 +152,7 @@ impl Measurement for Frequency {
         "Hz"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         // Smallest to largest
         let list = [
             ("nHz", 1e-9),
@@ -159,7 +168,7 @@ impl Measurement for Frequency {
     }
 }
 
-implement_measurement! { Frequency }
+implement_measurement! { Frequency<T> }
 
 #[cfg(test)]
 mod test {

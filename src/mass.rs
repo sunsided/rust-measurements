@@ -59,178 +59,187 @@ pub const KILOGRAM_LONG_TONS_FACTOR: f64 = KILOGRAM_POUNDS_FACTOR / 2240.0;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Mass {
-    kilograms: f64,
+pub struct Mass<T>
+where
+    T: num_traits::Float,
+{
+    kilograms: T,
 }
 
-impl Mass {
+impl<T> Mass<T>
+where
+    T: num_traits::Float,
+{
     /// Create a Mass from a floating point value in kilograms
-    pub fn from_kilograms(kilograms: f64) -> Self {
+    pub fn from_kilograms(kilograms: T) -> Self {
         Mass { kilograms }
     }
 
     /// Create a Mass from a floating point value in micrograms
-    pub fn from_micrograms(micrograms: f64) -> Self {
+    pub fn from_micrograms(micrograms: T) -> Self {
         Self::from_kilograms(micrograms / KILOGRAM_MICROGRAM_FACTOR)
     }
 
     /// Create a Mass from a floating point value in milligrams
-    pub fn from_milligrams(milligrams: f64) -> Self {
+    pub fn from_milligrams(milligrams: T) -> Self {
         Self::from_kilograms(milligrams / KILOGRAM_MILLIGRAM_FACTOR)
     }
 
     /// Create a Mass from a floating point value in carats
-    pub fn from_carats(carats: f64) -> Self {
+    pub fn from_carats(carats: T) -> Self {
         Self::from_kilograms(carats / KILOGRAM_CARAT_FACTOR)
     }
 
     /// Create a Mass from a floating point value in grams
-    pub fn from_grams(grams: f64) -> Self {
+    pub fn from_grams(grams: T) -> Self {
         Self::from_kilograms(grams / KILOGRAM_GRAM_FACTOR)
     }
 
     /// Create a Mass from a floating point value in metric tonnes
-    pub fn from_metric_tons(metric_tons: f64) -> Self {
+    pub fn from_metric_tons(metric_tons: T) -> Self {
         Self::from_kilograms(metric_tons / KILOGRAM_TONNE_FACTOR)
     }
 
     /// Create a Mass from a floating point value in metric tonnes
-    pub fn from_tonnes(metric_tons: f64) -> Self {
+    pub fn from_tonnes(metric_tons: T) -> Self {
         Self::from_kilograms(metric_tons / KILOGRAM_TONNE_FACTOR)
     }
 
     /// Create a Mass from a floating point value in grains
-    pub fn from_grains(grains: f64) -> Self {
+    pub fn from_grains(grains: T) -> Self {
         Self::from_kilograms(grains / KILOGRAM_GRAINS_FACTOR)
     }
 
     /// Create a Mass from a floating point value in pennyweights
-    pub fn from_pennyweights(pennyweights: f64) -> Self {
+    pub fn from_pennyweights(pennyweights: T) -> Self {
         Self::from_kilograms(pennyweights / KILOGRAM_PENNYWEIGHTS_FACTOR)
     }
 
     /// Create a Mass from a floating point value in ounces
-    pub fn from_ounces(ounces: f64) -> Self {
+    pub fn from_ounces(ounces: T) -> Self {
         Self::from_kilograms(ounces / KILOGRAM_OUNCES_FACTOR)
     }
 
     /// Create a Mass from a floating point value in troy_ounces
-    pub fn from_troy_ounces(troy_ounces: f64) -> Self {
+    pub fn from_troy_ounces(troy_ounces: T) -> Self {
         Self::from_kilograms(troy_ounces / KILOGRAM_TROY_OUNCES_FACTOR)
     }
 
     /// Create a Mass from a floating point value in Pounds (lbs)
-    pub fn from_pounds(pounds: f64) -> Self {
+    pub fn from_pounds(pounds: T) -> Self {
         Self::from_kilograms(pounds / KILOGRAM_POUNDS_FACTOR)
     }
 
     /// Create a Mass from a floating point value in Troy Pounds
-    pub fn from_troy_pounds(troy_pounds: f64) -> Self {
+    pub fn from_troy_pounds(troy_pounds: T) -> Self {
         Self::from_kilograms(troy_pounds / KILOGRAM_TROY_POUNDS_FACTOR)
     }
 
     /// Create a Mass from a floating point value in Stone (st.)
-    pub fn from_stones(stones: f64) -> Self {
+    pub fn from_stones(stones: T) -> Self {
         Self::from_kilograms(stones / KILOGRAM_STONES_FACTOR)
     }
 
     /// Create a Mass from a floating point value in short (US) tons
-    pub fn from_short_tons(short_tons: f64) -> Self {
+    pub fn from_short_tons(short_tons: T) -> Self {
         Self::from_kilograms(short_tons / KILOGRAM_SHORT_TONS_FACTOR)
     }
 
     /// Create a Mass from a floating point value in long (imperial) tons
-    pub fn from_long_tons(long_tons: f64) -> Self {
+    pub fn from_long_tons(long_tons: T) -> Self {
         Self::from_kilograms(long_tons / KILOGRAM_LONG_TONS_FACTOR)
     }
 
     /// Convert this Mass to a floating point value in micrograms
-    pub fn as_micrograms(&self) -> f64 {
+    pub fn as_micrograms(&self) -> T {
         self.kilograms * KILOGRAM_MICROGRAM_FACTOR
     }
 
     /// Convert this Mass to a floating point value in milligrams
-    pub fn as_milligrams(&self) -> f64 {
+    pub fn as_milligrams(&self) -> T {
         self.kilograms * KILOGRAM_MILLIGRAM_FACTOR
     }
 
     /// Convert this Mass to a floating point value in carats
-    pub fn as_carats(&self) -> f64 {
+    pub fn as_carats(&self) -> T {
         self.kilograms * KILOGRAM_CARAT_FACTOR
     }
 
     /// Convert this Mass to a floating point value in grams
-    pub fn as_grams(&self) -> f64 {
+    pub fn as_grams(&self) -> T {
         self.kilograms * KILOGRAM_GRAM_FACTOR
     }
 
     /// Convert this Mass to a floating point value in kilograms (kg)
-    pub fn as_kilograms(&self) -> f64 {
+    pub fn as_kilograms(&self) -> T {
         self.kilograms
     }
 
     /// Convert this Mass to a floating point value in metric Tonnes
-    pub fn as_metric_tons(&self) -> f64 {
+    pub fn as_metric_tons(&self) -> T {
         self.kilograms * KILOGRAM_TONNE_FACTOR
     }
 
     /// Convert this Mass to a floating point value in metric Tonnes
-    pub fn as_tonnes(&self) -> f64 {
+    pub fn as_tonnes(&self) -> T {
         self.kilograms * KILOGRAM_TONNE_FACTOR
     }
 
     /// Convert this Mass to a floating point value in Grains
-    pub fn as_grains(&self) -> f64 {
+    pub fn as_grains(&self) -> T {
         self.kilograms * KILOGRAM_GRAINS_FACTOR
     }
 
     /// Convert this Mass to a floating point value in Pennyweights
-    pub fn as_pennyweights(&self) -> f64 {
+    pub fn as_pennyweights(&self) -> T {
         self.kilograms * KILOGRAM_PENNYWEIGHTS_FACTOR
     }
 
     /// Convert this Mass to a floating point value in Ounces (oz)
-    pub fn as_ounces(&self) -> f64 {
+    pub fn as_ounces(&self) -> T {
         self.kilograms * KILOGRAM_OUNCES_FACTOR
     }
 
     /// Convert this Mass to a floating point value in Pounds (lbs)
-    pub fn as_pounds(&self) -> f64 {
+    pub fn as_pounds(&self) -> T {
         self.kilograms * KILOGRAM_POUNDS_FACTOR
     }
 
     /// Convert this Mass to a floating point value in Troy Ounces
-    pub fn as_troy_ounces(&self) -> f64 {
+    pub fn as_troy_ounces(&self) -> T {
         self.kilograms * KILOGRAM_TROY_OUNCES_FACTOR
     }
 
     /// Convert this Mass to a floating point value in Troy Pounds
-    pub fn as_troy_pounds(&self) -> f64 {
+    pub fn as_troy_pounds(&self) -> T {
         self.kilograms * KILOGRAM_TROY_POUNDS_FACTOR
     }
 
     /// Convert this Mass to a floating point value in Stone (st.)
-    pub fn as_stones(&self) -> f64 {
+    pub fn as_stones(&self) -> T {
         self.kilograms * KILOGRAM_STONES_FACTOR
     }
 
     /// Convert this Mass to a floating point value in short (US) Tons
-    pub fn as_short_tons(&self) -> f64 {
+    pub fn as_short_tons(&self) -> T {
         self.kilograms * KILOGRAM_SHORT_TONS_FACTOR
     }
 
     /// Convert this Mass to a floating point value in long (international) Tons
-    pub fn as_long_tons(&self) -> f64 {
+    pub fn as_long_tons(&self) -> T {
         self.kilograms * KILOGRAM_LONG_TONS_FACTOR
     }
 }
 
-impl Measurement for Mass {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Mass<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.kilograms
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_kilograms(units)
     }
 
@@ -238,7 +247,7 @@ impl Measurement for Mass {
         "kg"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         // Smallest to largest
         let list = [
             ("ng", 1e-12),
@@ -255,7 +264,10 @@ impl Measurement for Mass {
 }
 
 #[cfg(feature = "from_str")]
-impl FromStr for Mass {
+impl<T> FromStr for Mass<T>
+where
+    T: num_traits::Float,
+{
     type Err = std::num::ParseFloatError;
 
     /// Create a new Mass from a string
@@ -270,27 +282,27 @@ impl FromStr for Mass {
             let float_val = caps.get(1).unwrap().as_str();
             return Ok(
                 match caps.get(2).unwrap().as_str().to_lowercase().as_str() {
-                    "ug" | "μg" => Mass::from_micrograms(float_val.parse::<f64>()?),
-                    "mg" => Mass::from_milligrams(float_val.parse::<f64>()?),
-                    "ct" => Mass::from_carats(float_val.parse::<f64>()?),
-                    "g" => Mass::from_grams(float_val.parse::<f64>()?),
-                    "kg" => Mass::from_kilograms(float_val.parse::<f64>()?),
-                    "t" => Mass::from_metric_tons(float_val.parse::<f64>()?),
-                    "gr" => Mass::from_grains(float_val.parse::<f64>()?),
-                    "dwt" => Mass::from_pennyweights(float_val.parse::<f64>()?),
-                    "oz" => Mass::from_ounces(float_val.parse::<f64>()?),
-                    "st" => Mass::from_stones(float_val.parse::<f64>()?),
-                    "lb" | "lbs" => Mass::from_pounds(float_val.parse::<f64>()?),
-                    _ => Mass::from_grams(float_val.parse::<f64>()?),
+                    "ug" | "μg" => Mass::from_micrograms(float_val.parse::<T>()?),
+                    "mg" => Mass::from_milligrams(float_val.parse::<T>()?),
+                    "ct" => Mass::from_carats(float_val.parse::<T>()?),
+                    "g" => Mass::from_grams(float_val.parse::<T>()?),
+                    "kg" => Mass::from_kilograms(float_val.parse::<T>()?),
+                    "t" => Mass::from_metric_tons(float_val.parse::<T>()?),
+                    "gr" => Mass::from_grains(float_val.parse::<T>()?),
+                    "dwt" => Mass::from_pennyweights(float_val.parse::<T>()?),
+                    "oz" => Mass::from_ounces(float_val.parse::<T>()?),
+                    "st" => Mass::from_stones(float_val.parse::<T>()?),
+                    "lb" | "lbs" => Mass::from_pounds(float_val.parse::<T>()?),
+                    _ => Mass::from_grams(float_val.parse::<T>()?),
                 },
             );
         }
 
-        Ok(Mass::from_kilograms(val.parse::<f64>()?))
+        Ok(Mass::from_kilograms(val.parse::<T>()?))
     }
 }
 
-implement_measurement! { Mass }
+implement_measurement! { Mass<T> }
 
 #[cfg(test)]
 mod test {

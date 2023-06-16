@@ -15,78 +15,87 @@ use super::measurement::*;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Energy {
-    joules: f64,
+pub struct Energy<T>
+where
+    T: num_traits::Float,
+{
+    joules: T,
 }
 
-impl Energy {
+impl<T> Energy<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Energy from a floating point value in Joules (or watt-seconds)
-    pub fn from_joules(joules: f64) -> Energy {
+    pub fn from_joules(joules: T) -> Self {
         Energy { joules }
     }
 
     /// Create a new Energy from a floating point value in Kilocalories (often just called calories)
-    pub fn from_kcalories(kcalories: f64) -> Energy {
+    pub fn from_kcalories(kcalories: T) -> Self {
         Self::from_joules(kcalories * 4186.8)
     }
 
     /// Create a new Energy from a floating point value in British Thermal Units
-    pub fn from_btu(btu: f64) -> Energy {
+    pub fn from_btu(btu: T) -> Self {
         Self::from_joules(btu * 1055.056)
     }
 
     /// Create a new Energy from a floating point value in electron Volts (eV).
-    pub fn from_e_v(e_v: f64) -> Energy {
+    pub fn from_e_v(e_v: T) -> Self {
         Self::from_joules(e_v / 6.241_509_479_607_718e18)
     }
 
     /// Create a new Energy from a floating point value in Watt-hours (Wh)
-    pub fn from_watt_hours(wh: f64) -> Energy {
+    pub fn from_watt_hours(wh: T) -> Self {
         Self::from_joules(wh * 3600.0)
     }
 
     /// Create a new Energy from a floating point value in Kilowatt-Hours (kWh)
-    pub fn from_kilowatt_hours(kwh: f64) -> Energy {
+    pub fn from_kilowatt_hours(kwh: T) -> Self {
         Self::from_joules(kwh * 3600.0 * 1000.0)
     }
 
     /// Convert this Energy into a floating point value in Joules (or watt-seconds)
-    pub fn as_joules(&self) -> f64 {
+    pub fn as_joules(&self) -> T {
         self.joules
     }
 
     /// Convert this Energy into a floating point value in Kilocalories (often just called calories)
-    pub fn as_kcalories(&self) -> f64 {
+    pub fn as_kcalories(&self) -> T {
         self.joules / 4186.8
     }
 
     /// Convert this Energy into a floating point value in British Thermal Units
-    pub fn as_btu(&self) -> f64 {
+    pub fn as_btu(&self) -> T {
         self.joules / 1055.056
     }
 
     /// Convert this Energy into a floating point value in electron volts (eV)
-    pub fn as_e_v(&self) -> f64 {
+    pub fn as_e_v(&self) -> T {
         self.joules * 6.241_509_479_607_718e18
     }
 
     /// Convert this Energy into a floating point value in Watt-hours (Wh)
-    pub fn as_watt_hours(&self) -> f64 {
+    pub fn as_watt_hours(&self) -> T {
         self.joules / 3600.0
     }
 
     /// Convert this Energy into a floating point value in kilowatt-hours (kWh)
-    pub fn as_kilowatt_hours(&self) -> f64 {
+    pub fn as_kilowatt_hours(&self) -> T {
         self.joules / (3600.0 * 1000.0)
     }
 }
 
-impl Measurement for Energy {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Energy<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.joules
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_joules(units)
     }
 
@@ -94,7 +103,7 @@ impl Measurement for Energy {
         "J"
     }
 
-    fn get_appropriate_units(&self) -> (&'static str, f64) {
+    fn get_appropriate_units(&self) -> (&'static str, T) {
         // Smallest to Largest
         let list = [
             ("fJ", 1e-15),
@@ -114,7 +123,7 @@ impl Measurement for Energy {
     }
 }
 
-implement_measurement! { Energy }
+implement_measurement! { Energy<T> }
 
 #[cfg(test)]
 mod test {

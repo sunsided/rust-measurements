@@ -8,28 +8,40 @@ use super::*;
 /// from the multiplication, and you have to then convert
 /// it to whichever you want.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct TorqueEnergy {
-    newton_metres: f64,
+pub struct TorqueEnergy<T>
+where
+    T: num_traits::Float,
+{
+    newton_metres: T,
 }
 
-impl std::convert::From<TorqueEnergy> for Torque {
-    fn from(t: TorqueEnergy) -> Torque {
+impl<T> std::convert::From<TorqueEnergy<T>> for Torque<T>
+where
+    T: num_traits::Float,
+{
+    fn from(t: TorqueEnergy<T>) -> Torque<T> {
         Torque::from_newton_metres(t.newton_metres)
     }
 }
 
-impl std::convert::From<TorqueEnergy> for Energy {
-    fn from(t: TorqueEnergy) -> Energy {
+impl<T> std::convert::From<TorqueEnergy<T>> for Energy<T>
+where
+    T: num_traits::Float,
+{
+    fn from(t: TorqueEnergy<T>) -> Energy<T> {
         Energy::from_joules(t.newton_metres)
     }
 }
 
-impl Measurement for TorqueEnergy {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for TorqueEnergy<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.newton_metres
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         TorqueEnergy {
             newton_metres: units,
         }

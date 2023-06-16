@@ -17,48 +17,57 @@ const NEWTON_METRE_POUND_FOOT_FACTOR: f64 = 0.73756326522588;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Torque {
-    newton_metres: f64,
+pub struct Torque<T>
+where
+    T: num_traits::Float,
+{
+    newton_metres: T,
 }
 
-impl Torque {
+impl<T> Torque<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Torque from a floating point value in newton metres
-    pub fn from_newton_metres(newton_metres: f64) -> Self {
+    pub fn from_newton_metres(newton_metres: T) -> Self {
         Torque { newton_metres }
     }
 
     /// Create a new Torque from a floating point value in newton meters
-    pub fn from_newton_meters(newton_meters: f64) -> Self {
+    pub fn from_newton_meters(newton_meters: T) -> Self {
         Torque::from_newton_metres(newton_meters)
     }
 
     /// Create a new Torque from a floating point value in pound-foot (lbf.ft)
-    pub fn from_pound_foot(pound_foot: f64) -> Self {
+    pub fn from_pound_foot(pound_foot: T) -> Self {
         Torque::from_newton_metres(pound_foot / NEWTON_METRE_POUND_FOOT_FACTOR)
     }
 
     /// Convert this Torque to a floating point value in newton metres
-    pub fn as_newton_metres(&self) -> f64 {
+    pub fn as_newton_metres(&self) -> T {
         self.newton_metres
     }
 
     /// Convert this Torque to a floating point value in newton meters
-    pub fn as_newton_meters(&self) -> f64 {
+    pub fn as_newton_meters(&self) -> T {
         self.newton_metres
     }
 
     /// Convert this Torque to a floating point value in pound-foot (lbf-ft)
-    pub fn as_pound_foot(&self) -> f64 {
+    pub fn as_pound_foot(&self) -> T {
         self.newton_metres * NEWTON_METRE_POUND_FOOT_FACTOR
     }
 }
 
-impl Measurement for Torque {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Torque<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.newton_metres
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_newton_metres(units)
     }
 
@@ -67,7 +76,7 @@ impl Measurement for Torque {
     }
 }
 
-implement_measurement! { Torque }
+implement_measurement! { Torque<T> }
 
 #[cfg(test)]
 mod test {

@@ -1,11 +1,11 @@
 //! Types and constants for handling speed of rotation (angular velocity)
 
 use super::measurement::*;
+use crate::PI;
 #[cfg(feature = "from_str")]
 use regex::Regex;
 #[cfg(feature = "from_str")]
 use std::str::FromStr;
-use PI;
 
 /// The 'AngularVelocity' struct can be used to deal with angular velocities in a common way.
 ///
@@ -20,49 +20,58 @@ use PI;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct AngularVelocity {
-    radians_per_second: f64,
+pub struct AngularVelocity<T>
+where
+    T: num_traits::Float,
+{
+    radians_per_second: T,
 }
 
-impl AngularVelocity {
+impl<T> AngularVelocity<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new AngularVelocity from a floating point value in radians per second
-    pub fn from_radians_per_second(radians_per_second: f64) -> Self {
+    pub fn from_radians_per_second(radians_per_second: T) -> Self {
         AngularVelocity { radians_per_second }
     }
 
     /// Create a new AngularVelocity from a floating point value in revolutions per minute (RPM)
-    pub fn from_rpm(rpm: f64) -> Self {
+    pub fn from_rpm(rpm: T) -> Self {
         let revs_per_second = rpm / 60.0;
         AngularVelocity::from_radians_per_second(revs_per_second * PI * 2.0)
     }
 
     /// Create a new AngularVelocity from a floating point value in revolutions per second (Hz)
-    pub fn from_hertz(hz: f64) -> Self {
+    pub fn from_hertz(hz: T) -> Self {
         AngularVelocity::from_radians_per_second(hz * PI * 2.0)
     }
 
     /// Convert this AngularVelocity to a floating point value in radians per second
-    pub fn as_radians_per_second(&self) -> f64 {
+    pub fn as_radians_per_second(&self) -> T {
         self.radians_per_second
     }
 
     /// Convert this AngularVelocity to a floating point value in degrees
-    pub fn as_rpm(&self) -> f64 {
+    pub fn as_rpm(&self) -> T {
         (self.radians_per_second * 60.0) / (2.0 * PI)
     }
 
     /// Convert this AngularVelocity to a floating point value in revolutions per second (Hz)
-    pub fn as_hertz(&self) -> f64 {
+    pub fn as_hertz(&self) -> T {
         self.radians_per_second / (2.0 * PI)
     }
 }
 
-impl Measurement for AngularVelocity {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for AngularVelocity<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.radians_per_second
     }
 
-    fn from_base_units(units: f64) -> Self {
+    fn from_base_units(units: T) -> Self {
         Self::from_radians_per_second(units)
     }
 
@@ -72,7 +81,10 @@ impl Measurement for AngularVelocity {
 }
 
 #[cfg(feature = "from_str")]
-impl FromStr for AngularVelocity {
+impl<T> FromStr for AngularVelocity<T>
+where
+    T: num_traits::Float,
+{
     type Err = std::num::ParseFloatError;
 
     /// Create a new AngularVelocity from a string
@@ -87,21 +99,19 @@ impl FromStr for AngularVelocity {
             let float_val = caps.get(1).unwrap().as_str();
             return Ok(
                 match caps.get(2).unwrap().as_str().to_lowercase().as_str() {
-                    "rad/s" => AngularVelocity::from_radians_per_second(float_val.parse::<f64>()?),
-                    "rpm" => AngularVelocity::from_rpm(float_val.parse::<f64>()?),
-                    "hz" => AngularVelocity::from_hertz(float_val.parse::<f64>()?),
-                    _ => AngularVelocity::from_radians_per_second(val.parse::<f64>()?),
+                    "rad/s" => AngularVelocity::from_radians_per_second(float_val.parse::<T>()?),
+                    "rpm" => AngularVelocity::from_rpm(float_val.parse::<T>()?),
+                    "hz" => AngularVelocity::from_hertz(float_val.parse::<T>()?),
+                    _ => AngularVelocity::from_radians_per_second(val.parse::<T>()?),
                 },
             );
         }
 
-        Ok(AngularVelocity::from_radians_per_second(
-            val.parse::<f64>()?,
-        ))
+        Ok(AngularVelocity::from_radians_per_second(val.parse::<T>()?))
     }
 }
 
-implement_measurement! { AngularVelocity }
+implement_measurement! { AngularVelocity<T> }
 
 #[cfg(test)]
 mod test {

@@ -38,31 +38,37 @@ use temperature::Temperature;
 /// ```
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Copy, Clone, Debug, Default)]
-pub struct Humidity {
-    relative_humidity: f64, // expressed as a percentage
+pub struct Humidity<T>
+where
+    T: num_traits::Float,
+{
+    relative_humidity: T, // expressed as a percentage
 }
 
-impl Humidity {
+impl<T> Humidity<T>
+where
+    T: num_traits::Float,
+{
     /// Create a new Humidity from a floating point value percentage (i.e. 0.0% to 100.0%)
-    pub fn from_percent(percent: f64) -> Self {
+    pub fn from_percent(percent: T) -> Self {
         Humidity {
             relative_humidity: percent,
         }
     }
 
     /// Create a new Humidity from a floating point value ratio (i.e. 0.0 to 1.0)
-    pub fn from_ratio(relative_humidity: f64) -> Self {
+    pub fn from_ratio(relative_humidity: T) -> Self {
         Humidity {
             relative_humidity: relative_humidity * 100.0,
         }
     }
     /// Convert this relative humidity to a value expressed as a ratio (i.e. 0.0 to 1.0)
-    pub fn as_ratio(&self) -> f64 {
+    pub fn as_ratio(&self) -> T {
         self.relative_humidity / 100.0
     }
 
     /// Convert this relative humidty to a value expressed as a percentage (i.e. 0.0% to 100.0%)
-    pub fn as_percent(&self) -> f64 {
+    pub fn as_percent(&self) -> T {
         self.relative_humidity
     }
 
@@ -73,7 +79,7 @@ impl Humidity {
     pub fn as_dewpoint(&self, temp: Temperature) -> Temperature {
         let humidity = self.relative_humidity / 100.0;
         let celsius = temp.as_celsius();
-        let dewpoint: f64 = 243.04 * (humidity.ln() + ((17.625 * celsius) / (243.04 + celsius)))
+        let dewpoint: T = 243.04 * (humidity.ln() + ((17.625 * celsius) / (243.04 + celsius)))
             / (17.625 - humidity.ln() - ((17.625 * celsius) / (243.04 + celsius)));
         Temperature::from_celsius(dewpoint)
     }
@@ -82,11 +88,11 @@ impl Humidity {
     /// approximation, with coefficients derived by Alduchov and Eskridge (1996). The formulas assume
     //  standard atmospheric pressure.
     #[cfg(not(feature = "std"))]
-    pub fn as_dewpoint(&self, temp: Temperature) -> Temperature {
+    pub fn as_dewpoint(&self, temp: Temperature<T>) -> Temperature<T> {
         let humidity = self.relative_humidity / 100.0;
         let celsius = temp.as_celsius();
         let humidity_ln = libm::log(humidity);
-        let dewpoint: f64 = 243.04 * (humidity_ln + ((17.625 * celsius) / (243.04 + celsius)))
+        let dewpoint: T = 243.04 * (humidity_ln + ((17.625 * celsius) / (243.04 + celsius)))
             / (17.625 - humidity_ln - ((17.625 * celsius) / (243.04 + celsius)));
         Temperature::from_celsius(dewpoint)
     }
@@ -106,7 +112,7 @@ impl Humidity {
     /// at standard atmospheric pressure (1013.25 mb), using the Buck formula (accurate to +/- 0.02%
     /// between 0 deg C and 50 deg C)
     #[cfg(not(feature = "std"))]
-    pub fn as_vapor_pressure(&self, temp: Temperature) -> Pressure {
+    pub fn as_vapor_pressure(&self, temp: Temperature<T>) -> Pressure<T> {
         let temp = temp.as_celsius();
         let saturation_vapor_pressure =
             0.61121 * libm::exp((18.678 - (temp / 234.5)) * (temp / (257.14 + temp)));
@@ -115,7 +121,7 @@ impl Humidity {
 
     /// Calculates the absolute humidity (i.e. the density of water vapor in the air (kg/m3)), using
     /// the Ideal Gas Law equation.
-    pub fn as_absolute_humidity(&self, temp: Temperature) -> Density {
+    pub fn as_absolute_humidity(&self, temp: Temperature<T>) -> Density<T> {
         // use the Ideal Gas Law equation (Density = Pressure / (Temperature * [gas constant
         // for water vapor= 461.5 (J/kg*Kelvin)]))
         let density = self.as_vapor_pressure(temp).as_pascals() / (temp.as_kelvin() * 461.5);
@@ -139,7 +145,7 @@ impl Humidity {
     /// Approximation, with coefficients derived by Alduchov and Eskridge (1996). The formulas assume
     //  standard atmospheric pressure.
     #[cfg(not(feature = "std"))]
-    pub fn from_dewpoint(dewpoint: Temperature, temp: Temperature) -> Humidity {
+    pub fn from_dewpoint(dewpoint: Temperature<T>, temp: Temperature<T>) -> Humidity<T> {
         let dewpoint = dewpoint.as_celsius();
         let temp = temp.as_celsius();
         let rh = 100.0
@@ -149,12 +155,15 @@ impl Humidity {
     }
 }
 
-impl Measurement for Humidity {
-    fn as_base_units(&self) -> f64 {
+impl<T> Measurement<T> for Humidity<T>
+where
+    T: num_traits::Float,
+{
+    fn as_base_units(&self) -> T {
         self.relative_humidity
     }
 
-    fn from_base_units(relative_humidity: f64) -> Self {
+    fn from_base_units(relative_humidity: T) -> Self {
         Self::from_percent(relative_humidity)
     }
 
@@ -163,20 +172,26 @@ impl Measurement for Humidity {
     }
 }
 
-impl ::std::cmp::Eq for Humidity {}
-impl ::std::cmp::PartialEq for Humidity {
+impl<T> ::std::cmp::Eq for Humidity<T> where T: num_traits::Float {}
+impl<T> ::std::cmp::PartialEq for Humidity<T>
+where
+    T: num_traits::Float,
+{
     fn eq(&self, other: &Self) -> bool {
         self.as_base_units() == other.as_base_units()
     }
 }
 
-impl ::std::cmp::PartialOrd for Humidity {
+impl<T> ::std::cmp::PartialOrd for Humidity<T>
+where
+    T: num_traits::Float,
+{
     fn partial_cmp(&self, other: &Self) -> Option<::std::cmp::Ordering> {
         self.as_base_units().partial_cmp(&other.as_base_units())
     }
 }
 
-implement_display!(Humidity);
+implement_display!(Humidity<T>);
 
 #[cfg(test)]
 mod test {
